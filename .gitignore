@@ -40,7 +40,7 @@ htmlcov/
 .tox/
 .coverage
 .coverage.*
-.cache
+nnnn.cache
 nosetests.xml
 coverage.xml
 *.cover
@@ -102,3 +102,6 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+#MacOS
+.DS_Store
