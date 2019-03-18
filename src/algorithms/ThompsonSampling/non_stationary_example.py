@@ -1,8 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from Non_Stationary_Environment import *
-from TS_Learner import *
-from SWTS_Learner import *
+from algorithms.ThompsonSampling.Non_Stationary_Environment import *
+from algorithms.ThompsonSampling.TS_Learner import *
+from algorithms.ThompsonSampling.SWTS_Learner import *
 
 n_arms = 4
 p = np.array([[0.15, 0.1, 0.2, 0.35], [0.35, 0.21, 0.2, 0.35], [0.5, 0.1, 0.1, 0.15], [0.5, 0.1, 0.1, 0.15], [0.8, 0.21, 0.1, 0.15]])
@@ -61,3 +61,4 @@ plt.plot(np.cumsum(ts_instantaneous_regret), 'r')
 plt.plot(np.cumsum(swts_instantaneous_regret), 'b')
 plt.legend(["TS", "SW-TS"])
 plt.show()
+
