@@ -1,18 +1,18 @@
 import numpy as np
-import matplotlib.pyplot as plt
+import  matplotlib.pyplot as plt
 
 from Environment import *
 from TS_Learner import *
 from Greedy_Learner import *
 
-n_arms = 17
+n_arms = 4
 
-p = np.array([0.0022, 0.01, 0.0159, 0.0175, 0.0189, 0.0190, 0.02, 0.0198, 0.0180, 0.0161, 0.0145, 0.0129, 0.0113, 0.0084, 0.0058, 0.0029, 0.0016])
-opt = p[8]
+p = np.array([0.15, 0.1, 0.1, 0.35])
+opt = p[3]
 
-T = 365
+T = 300
 
-n_experiments = 5000
+n_experiments = 1000
 ts_rewards_per_experiment = []
 gr_rewards_per_experiment = []
 
