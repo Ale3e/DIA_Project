@@ -1,4 +1,4 @@
-from Environment import *
+from .Environment import *
 
 class Non_Stationary_Environment(Environment):
     def __init__(self, n_arms, probabilities, horizon):
