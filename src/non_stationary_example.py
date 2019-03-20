@@ -56,7 +56,7 @@ plt.plot(np.mean(ts_rewards_per_experiment, axis=0), 'r')
 plt.plot(np.mean(swts_rewards_per_experiment, axis=0), 'b')
 plt.plot(optimum_per_round, '--k')
 plt.legend(["TS", "SW-TS", "Optimum"])
-#plt.show() #se metto plt.show() solo alla fine mostra i due plot insieme
+# plt.show() #se metto plt.show() solo alla fine mostra i due plot insieme
 
 plt.figure(1)
 plt.ylabel("Regret")
