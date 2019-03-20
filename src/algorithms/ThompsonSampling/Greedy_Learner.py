@@ -1,5 +1,6 @@
 from .Learner import *
 
+
 class Greedy_Learner(Learner):
     def __init__(self, n_arms):
         super().__init__(n_arms)
@@ -15,4 +16,4 @@ class Greedy_Learner(Learner):
     def update(self, pulled_arm, reward):
         self.t += 1
         self.update_observations(pulled_arm, reward)
-        self.expected_rewards[pulled_arm] = (self.expected_rewards[pulled_arm] * (self.t - 1) + reward ) / self.t
+        self.expected_rewards[pulled_arm] = (self.expected_rewards[pulled_arm] * (self.t - 1) + reward) / self.t
