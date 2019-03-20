@@ -5,6 +5,7 @@ from algorithms.ThompsonSampling.TS_Learner import *
 from algorithms.ThompsonSampling.SWTS_Learner import *
 
 n_arms = 8
+price = np.array([300, 325, 350, 375, 400, 425, 450, 475])
 p = np.array([[0.045, 0.04, 0.0325, 0.0275, 0.0250, 0.02, 0.0175, 0.0125],
               [0.045, 0.04, 0.0325, 0.0275, 0.0250, 0.02, 0.0175, 0.0125],
               [0.035, 0.03, 0.0225, 0.0175, 0.015, 0.01, 0.0075, 0.0025],

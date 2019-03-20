@@ -1,7 +1,10 @@
+from numpy.core._multiarray_umath import ndarray
+
 from .Learner import *
 
 
 class TS_Learner(Learner):
+
     def __init__(self, n_arms):
         super().__init__(n_arms)
         self.beta_parameters = np.ones((n_arms, 2))
