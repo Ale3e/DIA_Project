@@ -1,4 +1,4 @@
-from Learner import *
+from .Learner import *
 
 class Greedy_Learner(Learner):
     def __init__(self, n_arms):

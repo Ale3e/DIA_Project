@@ -7,7 +7,7 @@ class TS_Learner(Learner):
 
     def pull_arm(self):
         idx = np.argmax(np.random.beta(self.beta_parameters[:,0], self.beta_parameters[:,1]))
-        return  idx
+        return idx
 
     def update(self, pulled_arm, reward):
         self.t+=1

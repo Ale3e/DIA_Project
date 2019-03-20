@@ -1,9 +1,9 @@
 import numpy as np
 import  matplotlib.pyplot as plt
 
-from Environment import *
-from TS_Learner import *
-from Greedy_Learner import *
+from algorithms.ThompsonSampling.Environment import *
+from algorithms.ThompsonSampling.TS_Learner import *
+from algorithms.ThompsonSampling.Greedy_Learner import *
 
 n_arms = 4
 

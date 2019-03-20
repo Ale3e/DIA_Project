@@ -1,9 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-from Environment import *
-from TS_Learner import *
-from Greedy_Learner import *
+from algorithms.ThompsonSampling.Environment import *
+from algorithms.ThompsonSampling.TS_Learner import *
+from algorithms.ThompsonSampling.Greedy_Learner import *
 
 n_arms = 17
 
@@ -51,3 +51,4 @@ plt.plot(np.cumsum(np.mean(opt - ts_rewards_per_experiment, axis=0)), 'r')
 plt.plot(np.cumsum(np.mean(opt - gr_rewards_per_experiment, axis=0)), 'g')
 plt.legend(["TS", "Greedy"])
 plt.show()
+
