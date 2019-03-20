@@ -8,7 +8,8 @@ from algorithms.ThompsonSampling.Greedy_Learner import *
 n_arms = 8
 price = np.array([300, 325, 350, 375, 400, 425, 450, 475])
 p = np.array([0.04, 0.035, 0.0275, 0.0225, 0.02, 0.0150, 0.0125, 0.0075])
-opt = p[4] * 375
+assumed_optimal_price = 425
+opt = np.array([assumed_optimal_price])
 
 T = 365
 
@@ -42,7 +43,7 @@ for e in range(0, n_experiments):
         reward_price = env.round_price(pulled_arm)
         gr_learner.update(pulled_arm, reward)
 
-        gs_rewards.append(reward)
+        gs_rewards.append(reward_price)
 
     ts_rewards_per_experiment.append(ts_rewards)
     gr_rewards_per_experiment.append(gs_rewards)
@@ -52,8 +53,8 @@ print("Start drawing...")
 plt.figure(0)
 plt.xlabel("t")
 plt.ylabel("Regret")
-plt.plot(np.cumsum(np.mean(opt - ts_rewards_per_experiment, axis=0)), 'r')
-plt.plot(np.cumsum(np.mean(opt - gr_rewards_per_experiment, axis=0)), 'g')
+plt.plot(np.mean(opt - ts_rewards_per_experiment, axis=0), 'r')
+plt.plot(np.mean(opt - gr_rewards_per_experiment, axis=0), 'g')
 plt.legend(["TS", "Greedy"])
 
 plt.figure(1)

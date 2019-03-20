@@ -14,6 +14,6 @@ class Environment():
 
     def round_price(self, pulled_arm):
         reward = self.reward
-        reward_price = self.price[pulled_arm] * self.probabilities[pulled_arm] * reward
+        reward_price = self.price[pulled_arm] * reward
         return reward_price
 
