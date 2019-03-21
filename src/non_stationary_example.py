@@ -13,24 +13,25 @@ p = np.array([[0.045, 0.04, 0.0325, 0.0275, 0.0250, 0.02, 0.0175, 0.0125],
 
 T = 365
 
-n_experiments = 100
+n_experiments = 500
 ts_rewards_per_experiment = []
 swts_rewards_per_experiment = []
 window_size = int(np.sqrt(T))
 
 for e in range(0, n_experiments):
-    ts_env = Non_Stationary_Environment(n_arms=n_arms, probabilities=p, horizon=T)
+    ts_env = Non_Stationary_Environment(n_arms=n_arms, probabilities=p, horizon=T, price=price)
     ts_learner = TS_Learner(n_arms=n_arms)
 
-    swts_env = Non_Stationary_Environment(n_arms=n_arms, probabilities=p, horizon=T)
+    swts_env = Non_Stationary_Environment(n_arms=n_arms, probabilities=p, horizon=T, price=price)
     swts_learner = SWTS_Learner(n_arms=n_arms, window_size=window_size)
 
     for t in range(0, T):
-        pulled_arm = ts_learner.pull_arm
+        pulled_arm = ts_learner.pull_arm()
         reward = ts_env.round(pulled_arm)
+        reward_price = ts_env.round_price(pulled_arm)
         ts_learner.update(pulled_arm, reward)
 
-        pulled_arm = swts_learner.pull_arm
+        pulled_arm = swts_learner.pull_arm()
         reward = swts_env.round(pulled_arm)
         swts_learner.update(pulled_arm, reward)
 
