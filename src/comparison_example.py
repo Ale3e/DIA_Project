@@ -5,21 +5,22 @@ from algorithms.ThompsonSampling.Environment import *
 from algorithms.ThompsonSampling.TS_Learner import *
 from algorithms.ThompsonSampling.Greedy_Learner import *
 
-n_arms = 8
+n_arms = 5
 price = np.array([300, 325, 350, 375, 400, 425, 450, 475])
-p = np.array([0.04, 0.035, 0.0275, 0.0225, 0.02, 0.0150, 0.0125, 0.0075])
+p = np.array([0.04, 0.895, 0.0275, 0.0225, 0.02, 0.0150, 0.0125, 0.0075])
 assumed_optimal_price = 425
 opt = np.array([assumed_optimal_price])
 
 T = 365
 
-n_experiments = 500
+n_experiments = 1000
 ts_rewards_per_experiment = []
 gr_rewards_per_experiment = []
 
 print("Start algorithms...")
 
 for e in range(0, n_experiments):
+    print(e)
     env = Environment(n_arms=n_arms, probabilities=p, price=price)
     ts_learner = TS_Learner(n_arms=n_arms)
     gr_learner = Greedy_Learner(n_arms=n_arms)
