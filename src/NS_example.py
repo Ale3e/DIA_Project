@@ -40,7 +40,9 @@ for e in range(0, n_experiments):
 
     swts_env = Non_Stationary_Environment(n_arms=n_arms, probabilities=p, horizon=T, price=prices)
     swts_learner = SWTS_Learner(n_arms=n_arms, window_size=window_size)
-
+    if (e % (n_experiments/100)) == 0:
+        loading = e/(n_experiments/100)
+        print(str(loading) + '%')
     for t in range(0, T):
         pulled_arm = ts_learner.pull_arm()
         reward = ts_env.round(pulled_arm)
