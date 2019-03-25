@@ -1,9 +1,8 @@
-import numpy as np
 import  matplotlib.pyplot as plt
 
-from algorithms.ThompsonSampling.Environment import *
-from algorithms.ThompsonSampling.TS_Learner import *
-from algorithms.ThompsonSampling.Greedy_Learner import *
+from algorithms.Environment import *
+from algorithms.thompson_sampling.TSLearner import *
+from algorithms.GreedyLearner import *
 
 n_arms = 4
 
@@ -20,8 +19,8 @@ print("Start algorithms...")
 
 for e in range(0, n_experiments):
     env = Environment(n_arms=n_arms, probabilities = p)
-    ts_learner = TS_Learner(n_arms = n_arms)
-    gr_learner = Greedy_Learner(n_arms = n_arms)
+    ts_learner = TSLearner(n_arms = n_arms)
+    gr_learner = GreedyLearner(n_arms = n_arms)
     ts_rewards = []
     gs_rewards = []
     for t in range(0, T):

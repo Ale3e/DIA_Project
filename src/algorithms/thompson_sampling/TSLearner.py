@@ -1,8 +1,7 @@
-from numpy.core._multiarray_umath import ndarray
-from .Learner import *
+from algorithms.Learner import *
 
 
-class TS_Learner(Learner):
+class TSLearner(Learner):
 
     def __init__(self, n_arms):
         super().__init__(n_arms)

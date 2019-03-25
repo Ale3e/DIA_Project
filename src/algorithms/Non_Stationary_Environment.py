@@ -1,4 +1,4 @@
-from .Environment import *
+from algorithms.Environment import *
 
 
 class Non_Stationary_Environment(Environment):

@@ -1,8 +1,6 @@
-import numpy as np
 import matplotlib.pyplot as plt
-from algorithms.ThompsonSampling.Non_Stationary_Environment import *
-from algorithms.ThompsonSampling.TS_Learner import *
-from algorithms.ThompsonSampling.SWTS_Learner import *
+from algorithms.Non_Stationary_Environment import *
+from algorithms.thompson_sampling.SWTSLearner import *
 
 #n_arms = 8
 #price = np.array([300, 325, 350, 375, 400, 425, 450, 475])
@@ -80,10 +78,10 @@ def plotta(e, T, p, ts_rewards_per_experiment, swts_rewards_per_experiment):
 
 for e in range(0, n_experiments):
     ts_env = Non_Stationary_Environment(n_arms=n_arms, probabilities=p, horizon=T, price=prices)
-    ts_learner = TS_Learner(n_arms=n_arms)
+    ts_learner = TSLearner(n_arms=n_arms)
 
     swts_env = Non_Stationary_Environment(n_arms=n_arms, probabilities=p, horizon=T, price=prices)
-    swts_learner = SWTS_Learner(n_arms=n_arms, window_size=window_size)
+    swts_learner = SWTSLearner(n_arms=n_arms, window_size=window_size)
 
     for t in range(0, T):
         pulled_arm = ts_learner.pull_arm()
