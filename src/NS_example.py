@@ -29,7 +29,7 @@ print(p)
 
 T = 365
 
-n_experiments = 100000
+n_experiments = 1000
 ts_rewards_per_experiment = []
 swts_rewards_per_experiment = []
 window_size = int(np.sqrt(T))
@@ -42,7 +42,7 @@ for e in range(0, n_experiments):
     swts_learner = SWTS_Learner(n_arms=n_arms, window_size=window_size)
     if (e % (n_experiments/100)) == 0:
         loading = e/(n_experiments/100)
-        print(str(loading) + '%')
+        print(str(loading) + '%', end="\r")
     for t in range(0, T):
         pulled_arm = ts_learner.pull_arm()
         reward = ts_env.round(pulled_arm)
