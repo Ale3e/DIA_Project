@@ -3,6 +3,7 @@ from algorithms.Learner import *
 
 class UCB1Learner(Learner):
     def __init__(self, counts, values):
+        super().__init__(len(counts))
         self.counts = counts
         self.values = values
 
@@ -25,7 +26,10 @@ class UCB1Learner(Learner):
 
     def update(self, pulled_arm, reward):
 
+        self.t += 1
+        self.update_observations(pulled_arm, reward)
         self.counts[pulled_arm] = self.counts[pulled_arm] + 1
+
         n = self.counts[pulled_arm]
         value = self.values[pulled_arm]
         new_value = ((n - 1) / float(n)) * value + (1 / float(n)) * reward

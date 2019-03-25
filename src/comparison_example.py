@@ -27,7 +27,7 @@ opt = np.array([assumed_optimal_price])
 
 T = 365
 
-n_experiments = 1000
+n_experiments = 500
 ts_rewards_per_experiment = []
 gr_rewards_per_experiment = []
 
@@ -77,5 +77,5 @@ plt.ylabel("Reward")
 plt.plot(np.cumsum(np.mean(ts_rewards_per_experiment, axis=0)), 'r')
 plt.plot(np.cumsum(np.mean(gr_rewards_per_experiment, axis=0)), 'g')
 plt.legend(["TS", "Greedy"])
-# plt.show()
+plt.show()
 
