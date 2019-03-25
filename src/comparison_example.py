@@ -5,10 +5,25 @@ from algorithms.ThompsonSampling.Environment import *
 from algorithms.ThompsonSampling.TS_Learner import *
 from algorithms.ThompsonSampling.Greedy_Learner import *
 
-n_arms = 5
-price = np.array([300, 325, 350, 375, 400, 425, 450, 475])
-p = np.array([0.04, 0.895, 0.0275, 0.0225, 0.02, 0.0150, 0.0125, 0.0075])
-assumed_optimal_price = 425
+#n_arms = 5
+#price = np.array([300, 325, 350, 375, 400, 425, 450, 475])
+#p = np.array([0.04, 0.895, 0.0275, 0.0225, 0.02, 0.0150, 0.0125, 0.0075])
+
+price = list(range(300, 500, 25))
+n_arms = len(price)
+
+p = []
+a = np.random.uniform(1, 0, size=n_arms)
+a = np.sort(a)
+p = a[::-1]
+
+p = np.array(p)
+
+p = np.array([0.04, 0.038, 0.032, 0.025, 0.023, 0.021, 0.0125, 0.075])
+
+print(p)
+
+assumed_optimal_price = price[4]
 opt = np.array([assumed_optimal_price])
 
 T = 365
@@ -20,7 +35,6 @@ gr_rewards_per_experiment = []
 print("Start algorithms...")
 
 for e in range(0, n_experiments):
-    print(e)
     env = Environment(n_arms=n_arms, probabilities=p, price=price)
     ts_learner = TS_Learner(n_arms=n_arms)
     gr_learner = Greedy_Learner(n_arms=n_arms)
@@ -39,15 +53,15 @@ for e in range(0, n_experiments):
 
         # Greedy Learner
 
-        pulled_arm = gr_learner.pull_arm()
-        reward = env.round(pulled_arm)
-        reward_price = env.round_price(pulled_arm)
-        gr_learner.update(pulled_arm, reward)
-
-        gs_rewards.append(reward_price)
+        # pulled_arm = gr_learner.pull_arm()
+        # reward = env.round(pulled_arm)
+        # reward_price = env.round_price(pulled_arm)
+        # gr_learner.update(pulled_arm, reward)
+        #
+        # gs_rewards.append(reward_price)
 
     ts_rewards_per_experiment.append(ts_rewards)
-    gr_rewards_per_experiment.append(gs_rewards)
+    # gr_rewards_per_experiment.append(gs_rewards)
 
 print("Start drawing...")
 
@@ -64,5 +78,5 @@ plt.ylabel("Reward")
 plt.plot(np.cumsum(np.mean(ts_rewards_per_experiment, axis=0)), 'r')
 plt.plot(np.cumsum(np.mean(gr_rewards_per_experiment, axis=0)), 'g')
 plt.legend(["TS", "Greedy"])
-plt.show()
+# plt.show()
 
