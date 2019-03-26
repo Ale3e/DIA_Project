@@ -4,13 +4,7 @@ from algorithms.Environment import *
 
 prices = np.array([300, 350, 400, 450, 500])
 
-n_arms = np.size(prices)
-
-p = []
-
-a = np.random.uniform(0.2, 0, size=n_arms)
-a = np.sort(a)
-p = (a[::-1])
+n_arms = len(prices)
 
 p = np.array([0.9, 0.6, 0.5, 0.4, 0.2])
 
@@ -21,9 +15,9 @@ print("Prob :" + str(p))
 print("Counts :" + str(counts))
 print("Values :" + str(values))
 
-T = 365
+T = 100
 
-n_experiments = 500
+n_experiments = 5
 
 ucb1_rewards_per_experiment = []
 
@@ -41,14 +35,16 @@ for e in range(0, n_experiments):
         print(str(loading) + '%')
 
     for t in range(0, T):
+
         pulled_arm = ucb1_learner.pull_arm()
         reward = env.round(pulled_arm)
-        reward_price = env.round_price(pulled_arm)
+        # reward_price = env.round_price(pulled_arm)
         ucb1_learner.update(pulled_arm, reward)
 
-        ucb1_rewards.append(reward_price)
+        # ucb1_rewards.append(reward_price)
 
-    ucb1_rewards_per_experiment.append(ucb1_rewards)
+    ucb1_rewards_per_experiment.append(ucb1_learner.collected_rewards)
+    # print(ucb1_learner.collected_rewards)
 
 plt.figure(0)
 plt.xlabel("t")
