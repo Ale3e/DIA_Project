@@ -8,17 +8,17 @@ n_arms = np.size(prices)
 p = []
 for i in range(0, 4):
     if i == 0:
-        a = np.random.uniform(0.5, 0, size=n_arms)
+        a = np.random.uniform(0.02, 0, size=n_arms)
         a = np.sort(a)
         p.append(a[::-1])
     if i == 1:
         p.append(p[0])
     if i == 2:
-        a = np.random.uniform(0.4, 0, size=n_arms)
+        a = np.random.uniform(0.01, 0, size=n_arms)
         a = np.sort(a)
         p.append(a[::-1])
     if i == 3:
-        a = np.random.uniform(0.45, 0, size=n_arms)
+        a = np.random.uniform(0.015, 0, size=n_arms)
         a = np.sort(a)
         p.append(a[::-1])
 

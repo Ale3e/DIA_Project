@@ -15,10 +15,10 @@ class UCB1Learner(Learner):
                 return arm
 
         ucb_values = [0.0 for arm in range(n_arms)]
-        total_counts = sum(self.counts)
+        # total_counts = sum(self.counts)
 
         for arm in range(n_arms):
-            bound = np.sqrt((2 * np.log(total_counts)) / float(self.counts[arm]))
+            bound = np.sqrt((2 * self.t) / float(self.counts[arm]))
             ucb_values[arm] = self.values[arm] + bound
 
         idx = np.argmax(ucb_values)

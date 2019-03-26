@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 from algorithms.UCB1.UCB1Learner import *
 from algorithms.Environment import *
 
-prices = np.array([300, 400, 500, 600])
+prices = np.array([300, 350, 400, 450, 500])
 
 n_arms = np.size(prices)
 
@@ -12,7 +12,7 @@ a = np.random.uniform(0.2, 0, size=n_arms)
 a = np.sort(a)
 p = (a[::-1])
 
-p = np.array(p)
+p = np.array([0.9, 0.6, 0.5, 0.4, 0.2])
 
 counts = np.zeros(n_arms)
 values = np.zeros(n_arms)
@@ -31,9 +31,11 @@ assumed_optimal_price = prices[2]
 opt = np.array([assumed_optimal_price])
 
 for e in range(0, n_experiments):
+
     env = Environment(n_arms=n_arms, probabilities=p, price=prices)
     ucb1_learner = UCB1Learner(counts, values)
     ucb1_rewards = []
+
     if (e % (n_experiments/100)) == 0:
         loading = e/(n_experiments/100)
         print(str(loading) + '%')
@@ -44,9 +46,9 @@ for e in range(0, n_experiments):
         reward_price = env.round_price(pulled_arm)
         ucb1_learner.update(pulled_arm, reward)
 
-        ucb1_rewards.append(ucb1_learner.collected_rewards)
+        ucb1_rewards.append(reward_price)
 
-    ucb1_rewards_per_experiment.append(ucb1_learner.collected_rewards)
+    ucb1_rewards_per_experiment.append(ucb1_rewards)
 
 plt.figure(0)
 plt.xlabel("t")
