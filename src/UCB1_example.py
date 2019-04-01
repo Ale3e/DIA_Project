@@ -52,7 +52,7 @@ for e in range(0, n_experiments):
 plt.figure(0)
 plt.xlabel("t")
 plt.ylabel("Regret")
-plt.plot(np.cumsum((opt * 100) - np.mean(ucb1_rewards_per_experiment, axis=0)), 'r')
+plt.plot(np.cumsum(np.mean(opt - ucb1_rewards_per_experiment, axis=0)), 'r')
 
 plt.figure(1)
 plt.xlabel("t")

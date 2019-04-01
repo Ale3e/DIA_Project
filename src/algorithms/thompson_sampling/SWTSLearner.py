@@ -1,5 +1,6 @@
 from .TSLearner import *
 
+
 class SWTSLearner(TSLearner):
     def __init__(self, n_arms, window_size):
         super().__init__(n_arms)
@@ -13,4 +14,3 @@ class SWTSLearner(TSLearner):
 
         self.beta_parameters[pulled_arm, 0] = cum_rew + 1.0
         self.beta_parameters[pulled_arm, 1] = n_rounds_arm - cum_rew + 1.0
-        
