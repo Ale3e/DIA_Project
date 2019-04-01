@@ -17,7 +17,7 @@ print("Values :" + str(values))
 
 T = 100
 
-n_experiments = 5
+n_experiments = 200
 
 ucb1_rewards_per_experiment = []
 
@@ -54,5 +54,5 @@ plt.plot(np.cumsum(np.mean(opt - ucb1_rewards_per_experiment, axis=0)), 'r')
 plt.figure(1)
 plt.xlabel("t")
 plt.ylabel("Reward")
-plt.plot(np.cumsum(np.mean(ucb1_rewards_per_experiment, axis=0)), 'r')
+plt.plot((np.mean(ucb1_rewards_per_experiment, axis=0)), 'r')
 plt.show()
