@@ -10,7 +10,7 @@ print(price)
 n_arms = len(price)
 print(n_arms)
 
-p = np.array([0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2])
+p = np.array([0.04, 0.038, 0.035, 0.03, 0.027, 0.022, 0.015, 0.009])
 print(p)
 
 assumed_optimal_price_bin = p[0]
@@ -21,7 +21,7 @@ opt = np.array([assumed_optimal_price])
 
 T = 365
 
-n_experiments = 200
+n_experiments = 500
 ts_bin_rewards_per_experiment = []
 ts_rewards_per_experiment = []
 
@@ -57,20 +57,21 @@ for e in range(0, n_experiments):
     ts_bin_rewards_per_experiment.append(ts_bin_learner.collected_rewards)
     # ts_rewards_per_experiment.append(ts_learner.collected_rewards_price)
 
+
 # Plotting
 
 plt.figure(0)
 plt.xlabel("t")
 plt.ylabel("Regret")
 plt.plot(np.cumsum(np.mean(optBin - ts_bin_rewards_per_experiment, axis=0)), 'g')
-plt.plot(np.cumsum(np.mean(opt - ts_rewards_per_experiment, axis=0)), 'r')
+# plt.plot(np.cumsum(np.mean(opt - ts_rewards_per_experiment, axis=0)), 'r')
 plt.legend(["TS_BIN", "TS"])
 
 plt.figure(1)
 plt.xlabel("t")
 plt.ylabel("Reward")
 plt.plot(np.mean(ts_bin_rewards_per_experiment, axis=0), 'g')
-plt.plot(np.mean(ts_rewards_per_experiment, axis=0), 'r')
+# plt.plot(np.mean(ts_rewards_per_experiment, axis=0), 'r')
 plt.legend(["TS_BIN", "TS"])
 plt.show()
 

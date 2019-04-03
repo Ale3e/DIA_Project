@@ -15,7 +15,8 @@ class TSLearner(Learner):
 
     def pull_arm(self):
         a = np.random.beta(self.beta_parameters[:, 0], self.beta_parameters[:, 1])
-        idx = np.argmax(a)
+        price = np.array(list(range(300, 500, 25)))
+        idx = np.argmax(a*price)
         return idx
 
     def update(self, pulled_arm, reward):
@@ -34,8 +35,8 @@ class TSLearner(Learner):
         self.t += 1
         self.normal_parameters[pulled_arm, 2] = self.normal_parameters[pulled_arm, 2] + reward_price
         self.normal_parameters[pulled_arm, 3] = self.normal_parameters[pulled_arm, 3] + 1
-        self.normal_parameters[pulled_arm, 0] = self.normal_parameters[pulled_arm, 2] / self.normal_parameters[pulled_arm, 3]
         self.values[pulled_arm].append(reward_price)
+        self.normal_parameters[pulled_arm, 0] = np.mean([self.values[pulled_arm]])
         self.normal_parameters[pulled_arm, 1] = np.std([self.values[pulled_arm]])
 
         self.update_observations_price(pulled_arm, reward_price)
