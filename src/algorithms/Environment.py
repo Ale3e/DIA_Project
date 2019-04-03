@@ -1,7 +1,7 @@
 import numpy as np
 
 
-class Environment():
+class Environment:
     def __init__(self, n_arms, probabilities, price):
         self.n_arms = n_arms
         self.probabilities = probabilities
@@ -13,7 +13,7 @@ class Environment():
         return self.reward
 
     def round_price(self, pulled_arm):
-        reward = self.reward
-        reward_price = self.price[pulled_arm] * reward
+        #self.reward = abs(np.random.normal(mean, std))
+        reward_price = self.price[pulled_arm] * self.reward
         return reward_price
 
