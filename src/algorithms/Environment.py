@@ -13,7 +13,7 @@ class Environment:
         return self.reward
 
     def round_price(self, pulled_arm):
-        #self.reward = abs(np.random.normal(mean, std))
-        reward_price = self.price[pulled_arm] * self.reward
+        reward = self.reward
+        reward_price = self.price[pulled_arm] * reward
         return reward_price
 
