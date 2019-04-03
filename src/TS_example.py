@@ -10,7 +10,7 @@ print(price)
 n_arms = len(price)
 print(n_arms)
 
-p = np.array([0.04, 0.038, 0.035, 0.03, 0.027, 0.022, 0.015, 0.009])
+p = np.array([0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2])
 print(p)
 
 assumed_optimal_price_bin = p[0]
@@ -63,7 +63,7 @@ for e in range(0, n_experiments):
 plt.figure(0)
 plt.xlabel("t")
 plt.ylabel("Regret")
-plt.plot(np.cumsum(np.mean(optBin - ts_bin_rewards_per_experiment, axis=0)), 'g')
+plt.plot(np.cumsum(np.mean(opt - ts_bin_rewards_per_experiment, axis=0)), 'g')
 # plt.plot(np.cumsum(np.mean(opt - ts_rewards_per_experiment, axis=0)), 'r')
 plt.legend(["TS_BIN", "TS"])
 
