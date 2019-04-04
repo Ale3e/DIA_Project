@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from algorithms.UCB1.UCB1Learner import *
+from algorithms.ucb1.UCB1Learner import *
 from algorithms.Environment import *
 
 prices = np.array([300, 350, 400, 450, 500])
@@ -47,7 +47,6 @@ for e in range(0, n_experiments):
         # ucb1_rewards.append(reward_price)
 
     ucb1_rewards_per_experiment.append(ucb1_learner.collected_rewards)
-    print(ucb1_learner.collected_rewards)
 
 plt.figure(0)
 plt.xlabel("t")
