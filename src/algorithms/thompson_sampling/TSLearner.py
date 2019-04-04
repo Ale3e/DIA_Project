@@ -11,18 +11,7 @@ class TSLearner(Learner):
 
     def pull_arm(self):
         a = np.random.beta(self.beta_parameters[:, 0], self.beta_parameters[:, 1])
-<<<<<<< HEAD
         idx = np.argmax(a * self.price)
-=======
-        price = np.array(list(range(300, 500, 25)))
-        idx = np.argmax(a * price)
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
->>>>>>> 6d5b50a6a3309856e927fa7bebedfea639cdb29a
-=======
->>>>>>> 6d5b50a6a3309856e927fa7bebedfea639cdb29a
->>>>>>> Stashed changes
         return idx
 
     def update(self, pulled_arm, reward):

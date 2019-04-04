@@ -5,7 +5,6 @@ from algorithms.thompson_sampling.TSLearner import *
 from algorithms.ucb1.UCB1Learner import *
 
 # Environment variable
-
 price = list(range(300, 500, 25))
 print(price)
 n_arms = len(price)
@@ -44,7 +43,7 @@ for e in range(0, n_experiments):
         ts_learner.update(pulled_arm, reward)
 
         # UBC1 routine
-        pulled_arm = ts_learner.pull_arm()
+        pulled_arm = ucb1_learner.pull_arm()
         reward = env.round(pulled_arm)
         ucb1_learner.update(pulled_arm, reward)
 

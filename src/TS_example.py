@@ -1,36 +1,18 @@
 import matplotlib.pyplot as plt
-
 from algorithms.Environment import *
 from algorithms.thompson_sampling.TSLearner import *
 from algorithms.GreedyLearner import *
 
+# Environment variable
 price = list(range(300, 500, 25))
-print(price)
-
 n_arms = len(price)
-print(n_arms)
-
 p = np.array([0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.05, 0.01])
-print(p)
-
 assumed_optimal_price = price[2]
 opt = np.array([assumed_optimal_price])
-
-T = 10
-
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
+T = 365
 n_experiments = 500
 
-=======
-=======
->>>>>>> 6d5b50a6a3309856e927fa7bebedfea639cdb29a
->>>>>>> Stashed changes
-n_experiments = 5
-ts_bin_rewards_per_experiment = []
->>>>>>> 6d5b50a6a3309856e927fa7bebedfea639cdb29a
+# TS Variable
 ts_rewards_per_experiment = []
 
 for e in range(0, n_experiments):
@@ -38,27 +20,7 @@ for e in range(0, n_experiments):
     env = Environment(n_arms=n_arms, probabilities=p, price=price)
     ts_learner = TSLearner(n_arms=n_arms, price=price)
 
-<<<<<<< HEAD
     # The if is only for showing loading percentage
-=======
-    ts_bin_learner = TSLearner(n_arms=n_arms)
-    ts_bin_learner.initialize(price)
-
-    ts_learner = TSLearner(n_arms=n_arms)
-<<<<<<< Updated upstream
-=======
-<<<<<<< HEAD
-=======
-
-    # -- inizializza Normale --
-    # ts_learner.initialize(price)
->>>>>>> 6d5b50a6a3309856e927fa7bebedfea639cdb29a
->>>>>>> Stashed changes
-
-    # -- inizializza Normale --
-    # ts_learner.initialize(price)
-
->>>>>>> 6d5b50a6a3309856e927fa7bebedfea639cdb29a
     if (e % (n_experiments/100)) == 0:
         loading = e/(n_experiments/100)
         print(str(loading) + '%')
