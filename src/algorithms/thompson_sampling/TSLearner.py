@@ -16,7 +16,7 @@ class TSLearner(Learner):
     def pull_arm(self):
         a = np.random.beta(self.beta_parameters[:, 0], self.beta_parameters[:, 1])
         price = np.array(list(range(300, 500, 25)))
-        idx = np.argmax(a*price)
+        idx = np.argmax(a * price)
         return idx
 
     def update(self, pulled_arm, reward):

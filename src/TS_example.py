@@ -19,9 +19,9 @@ optBin = np.array([assumed_optimal_price_bin])
 assumed_optimal_price = price[0]
 opt = np.array([assumed_optimal_price])
 
-T = 365
+T = 10
 
-n_experiments = 500
+n_experiments = 5
 ts_bin_rewards_per_experiment = []
 ts_rewards_per_experiment = []
 
@@ -33,7 +33,9 @@ for e in range(0, n_experiments):
     ts_bin_learner.initialize(price)
 
     ts_learner = TSLearner(n_arms=n_arms)
-    ts_learner.initialize(price)
+
+    # -- inizializza Normale --
+    # ts_learner.initialize(price)
 
     if (e % (n_experiments/100)) == 0:
         loading = e/(n_experiments/100)
@@ -60,14 +62,14 @@ for e in range(0, n_experiments):
 
 # Plotting
 
-plt.figure(0)
+plt.figure("Regret")
 plt.xlabel("t")
 plt.ylabel("Regret")
 plt.plot(np.cumsum(np.mean(opt - ts_bin_rewards_per_experiment, axis=0)), 'g')
 # plt.plot(np.cumsum(np.mean(opt - ts_rewards_per_experiment, axis=0)), 'r')
 plt.legend(["TS_BIN", "TS"])
 
-plt.figure(1)
+plt.figure("Reward")
 plt.xlabel("t")
 plt.ylabel("Reward")
 plt.plot(np.mean(ts_bin_rewards_per_experiment, axis=0), 'g')

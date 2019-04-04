@@ -25,9 +25,9 @@ for i in range(0, 4):
 p = np.array(p)
 print(p)
 
-T = 365
+T = 100
 
-n_experiments = 1000
+n_experiments = 200
 ts_rewards_per_experiment = []
 swts_rewards_per_experiment = []
 window_size = int(np.sqrt(T))
