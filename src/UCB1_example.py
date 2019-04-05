@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-from algorithms.UCB1.UCB1Learner import *
+from algorithms.ucb1.UCB1Learner import *
 from algorithms.Environment import *
 
 # Environment variable
@@ -27,10 +27,7 @@ for e in range(0, n_experiments):
         print(str(loading) + '%')
 
     # UBC1 routine init
-    # In the first cycle of the algorithm is necessary to compute every arm once
-    for arm in range(n_arms):
-        reward = env.round(arm)
-        ucb1_learner.initialize(arm, reward)
+    ucb1_learner.initialize(env=env)
 
     for t in range(0, T):
 
@@ -48,11 +45,11 @@ plt.figure("Regret")
 plt.xlabel("t")
 plt.ylabel("Regret")
 plt.plot(np.cumsum(np.mean(opt - ucb1_rewards_per_experiment, axis=0)), 'b')
-plt.legend(["TS"])
+plt.legend(["UCB1"])
 
 plt.figure("Reward")
 plt.xlabel("t")
 plt.ylabel("Reward")
 plt.plot(np.mean(ucb1_rewards_per_experiment, axis=0), 'b')
-plt.legend(["TS"])
+plt.legend(["UCB1"])
 plt.show()

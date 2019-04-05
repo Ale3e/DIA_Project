@@ -8,13 +8,13 @@ class UCB1Learner(Learner):
         self.values = values
         self.price = price
 
-    def initialize(self, pulled_arm, reward):
+    def initialize(self, env):
         # First cycle update the value of counts and values
-        self.counts[pulled_arm] = self.counts[pulled_arm] + 1
-        n = self.counts[pulled_arm]
-        value = self.values[pulled_arm]
-        new_value = ((n - 1) / float(n)) * value + (1 / float(n)) * reward
-        self.values[pulled_arm] = new_value
+        n_arms = len(self.counts)
+        for arm in range(n_arms):
+            reward = env.round(arm)
+            self.counts[arm] += 1
+            self.values[arm] = reward
 
     def pull_arm(self):
         n_arms = len(self.counts)
