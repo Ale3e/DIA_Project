@@ -1,15 +1,15 @@
 import matplotlib.pyplot as plt
-from algorithms.ucb1.UCB1Learner import *
+from algorithms.UCB1.UCB1Learner import *
 from algorithms.Environment import *
 
 # Environment variable
 price = list(range(300, 500, 25))
 n_arms = len(price)
-p = np.array([0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.05, 0.01])
+p = np.array([0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.2, 0.1])
 assumed_optimal_price = price[2]
 opt = np.array([assumed_optimal_price])
 T = 365
-n_experiments = 500
+n_experiments = 100
 
 # UCB1 Variable
 counts = np.zeros(n_arms)
@@ -25,6 +25,12 @@ for e in range(0, n_experiments):
     if (e % (n_experiments/100)) == 0:
         loading = e/(n_experiments/100)
         print(str(loading) + '%')
+
+    # UBC1 routine init
+    # In the first cycle of the algorithm is necessary to compute every arm once
+    for arm in range(n_arms):
+        reward = env.round(arm)
+        ucb1_learner.initialize(arm, reward)
 
     for t in range(0, T):
 

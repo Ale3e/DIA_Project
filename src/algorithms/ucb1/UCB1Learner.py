@@ -8,13 +8,16 @@ class UCB1Learner(Learner):
         self.values = values
         self.price = price
 
-    def pull_arm(self):
-        # In the first cycle of the algorithm is necessary to compute every arm once
-        n_arms = len(self.counts)
-        for arm in range(n_arms):
-            if self.counts[arm] == 0:
-                return arm
+    def initialize(self, pulled_arm, reward):
+        # First cycle update the value of counts and values
+        self.counts[pulled_arm] = self.counts[pulled_arm] + 1
+        n = self.counts[pulled_arm]
+        value = self.values[pulled_arm]
+        new_value = ((n - 1) / float(n)) * value + (1 / float(n)) * reward
+        self.values[pulled_arm] = new_value
 
+    def pull_arm(self):
+        n_arms = len(self.counts)
         ucb_values = [0.0 for arm in range(n_arms)]
         total_counts = sum(self.counts)
         # Compute the upper bound value for each arm
