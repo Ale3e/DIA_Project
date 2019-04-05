@@ -9,7 +9,7 @@ p = np.array([0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.2, 0.1])
 assumed_optimal_price = price[2]
 opt = np.array([assumed_optimal_price])
 T = 365
-n_experiments = 100
+n_experiments = 500
 
 # UCB1 Variable
 counts = np.zeros(n_arms)
