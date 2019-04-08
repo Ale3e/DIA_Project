@@ -21,7 +21,7 @@ ab_summary = ab_data.pivot_table(values='converted', index='group', aggfunc=np.s
 ab_summary['total'] = ab_data.pivot_table(values='converted', index='group', aggfunc=lambda x: len(x))
 ab_summary['rate'] = ab_data.pivot_table(values='converted', index='group')
 
-print(ab_summary['rate'][0] - ab_summary['rate'][1])
+
 
 A_converted=ab_summary['converted'][0]
 A_total=ab_summary['total'][0]
@@ -33,13 +33,18 @@ B_cr=ab_summary['rate'][1]
 
 
 fig, ax = plt.subplots(figsize=(12,6))
-x = np.linspace(A_converted-49, A_converted+50, 100)
-y = scs.binom(A_total, A_cr).pmf(x)
-ax.bar(x, y, alpha=0.5)
-ax.axvline(x=B_cr * A_total, c='blue', alpha=0.75, linestyle='--')
+xA = np.linspace(A_converted-49, A_converted+50, 100)
+yA = scs.binom(A_total, A_cr).pmf(xA)
+ax.bar(xA, yA, alpha=0.5)
+xB = np.linspace(B_converted-49, B_converted+50, 100)
+yB = scs.binom(B_total, B_cr).pmf(xB)
+ax.bar(xB, yB, alpha=0.5)
+
+
+# ax.axvline(x=B_cr * A_total, c='blue', alpha=0.75, linestyle='--')
 plt.xlabel('converted')
 plt.ylabel('probability')
-
+plt.show()
 # fig, ax = plt.subplots(figsize=(12,6))
 # xA = np.linspace(A_converted-49, A_converted+50, 100)
 # yA = scs.binom(A_total, p_A).pmf(xA)
@@ -51,4 +56,4 @@ plt.ylabel('probability')
 # plt.xlabel('converted')
 # plt.ylabel('probability')
 
-plt.show()
+print(ab_summary['rate'][0] - ab_summary['rate'][1])
