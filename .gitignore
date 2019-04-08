@@ -345,3 +345,29 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.gitignore.io/api/vim,emacs,linux,macos,python,windows,pycharm
+
+# Created by https://www.gitignore.io/api/microsoftoffice
+# Edit at https://www.gitignore.io/?templates=microsoftoffice
+
+### MicrosoftOffice ###
+*.tmp
+
+# Word temporary
+~$*.doc*
+
+# Word Auto Backup File
+Backup of *.doc*
+
+# Excel temporary
+~$*.xls*
+
+# Excel Backup File
+*.xlk
+
+# PowerPoint temporary
+~$*.ppt*
+
+# Visio autosave temporary files
+*.~vsd*
+
+# End of https://www.gitignore.io/api/microsoftoffice
