@@ -4,34 +4,30 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 
-
 # current probability A
-true_rate_control = 0.069
+true_rate_control = 0.02
 
 # test probability B
-true_rate_experiment = 0.09
+true_rate_experiment = 0.039
 
-people_visting_site = 10000
+people_visting_site = 1000
 
  # nell'A/B testing devo avere tutti i campioni già rilevati, pertanto creo due array identici con valori casuali
 control, experiment = np.random.rand(2, people_visting_site)
 
 # dopodichè conto fallimenti e successi sulla base delle probabilità
 
-#if the random number is above than the true rate it is counted as a success, else failure
+# if the random number is above than the true rate it is counted as a success, else failure
 control_successes = sum(control < true_rate_control)
 experiment_successes = sum(experiment < true_rate_experiment)
 
 control_failures = people_visting_site - control_successes
 experiment_failures = people_visting_site - experiment_successes
 
-
 # Our Priors 
 prior_successes = 1
 prior_failures = 1
 prior_distribution = beta(prior_successes, prior_failures)
-
-
 
 #graph of prior distribution
 fig, ax = plt.subplots()
@@ -64,6 +60,7 @@ experiment_distribution = beta(experiment_alpha, experiment_beta)
 x = np.linspace(0, 1, 1000)
 ax.plot(x, control_distribution.pdf(x))
 ax.plot(x, experiment_distribution.pdf(x))
+ax.legend(['Group A', 'Group B'])
 
 ax.set(xlabel='conversion rate', ylabel='density');
 
@@ -105,6 +102,7 @@ experiment_failures += additional_visitors - sum(experiment < true_rate_experime
 x = np.linspace(0, 1, 1000)
 ax.plot(x, control_distribution.pdf(x))
 ax.plot(x, experiment_distribution.pdf(x))
+ax.legend(['Group A', 'Group B'])
 
 ax.set(xlabel='conversion rate', ylabel='density');
 
@@ -113,6 +111,5 @@ print(f'control_failures: {control_failures}')
 print('--------------------------')
 print(f'experiment_successes: {experiment_successes}')
 print(f'experiment_failures: {experiment_failures}')
-
 
 plt.show()
