@@ -371,3 +371,6 @@ Backup of *.doc*
 *.~vsd*
 
 # End of https://www.gitignore.io/api/microsoftoffice
+
+#idea files
+.idea/
