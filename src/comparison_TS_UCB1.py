@@ -5,18 +5,16 @@ from algorithms.thompson_sampling.TSLearner import *
 from algorithms.ucb1.UCB1Learner import *
 
 # Environment variable
-# price = list(range(300, 525, 25))
 price = list(range(325, 450, 25))
 print(price)
 n_arms = len(price)
 print(n_arms)
-# p = np.array([0.0183, 0.0179, 0.0173, 0.0157, 0.0149, 0.0133, 0.0122, 0.0108, 0.0091])
 p = np.array([0.0263, 0.0193, 0.0129, 0.0061, 0.0012])
 print(p)
 assumed_optimal_price = price[1]
 opt = np.array([assumed_optimal_price])
 T = 365
-n_experiments = 10000
+n_experiments = 1000
 
 # TS Variable
 ts_rewards_per_experiment = []

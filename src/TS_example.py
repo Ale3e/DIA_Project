@@ -4,14 +4,16 @@ from algorithms.thompson_sampling.TSLearner import *
 from algorithms.GreedyLearner import *
 
 # Environment variable
-price = list(range(300, 500, 25))
+price = list(range(325, 450, 25))
+print(price)
 n_arms = len(price)
-p = np.array([0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.05, 0.01])
-assumed_optimal_price = price[2]
+print(n_arms)
+p = np.array([0.0263, 0.0193, 0.0129, 0.0061, 0.0012])
+print(p)
+assumed_optimal_price = price[1]
 opt = np.array([assumed_optimal_price])
-T = 365
-n_experiments = 500
-
+T = 365*2
+n_experiments = 10000
 # TS Variable
 ts_rewards_per_experiment = []
 
