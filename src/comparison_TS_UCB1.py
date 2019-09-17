@@ -14,7 +14,7 @@ print(p)
 assumed_optimal_price = price[1]
 opt = np.array([assumed_optimal_price])
 T = 365
-n_experiments = 1000
+n_experiments = 100
 
 # TS Variable
 ts_rewards_per_experiment = []
