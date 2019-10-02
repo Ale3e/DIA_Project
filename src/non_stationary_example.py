@@ -39,7 +39,7 @@ print(p)
 
 T = 365*4
 
-n_experiments = 50000
+n_experiments = 1000
 ts_rewards_per_experiment = []
 swts_rewards_per_experiment = []
 window_size = int(np.sqrt(T))
