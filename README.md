@@ -1,19 +1,14 @@
 # DIA_Project
 
-# MONOPATTINO ELETTRICO
+# Pricing
 
-curva bene di lusso
+Todo:
+- Adattare le probabilità al problema (alzarle)
+- Sistemare l'excell con le probalità e grafici giusti 
+- Curve di domanda
+- Aggragata
+- Disaggregata (3 classi)
+- Aggregata con fasi 
+- Disagreggate con fasi
 
-classi 
-	students 20%
-	workers 75%
-	retired 5%
-
-fasi 
-	SpringSummer
-	Autumn
-	Winter
-
-time horizon -> 1 anno
-
-prezzi ogni 25€ [300-450]
+# Social Influence
