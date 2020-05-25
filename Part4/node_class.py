@@ -20,6 +20,12 @@ class Node:
         self.adjacency_list = []
         self.adjacency_weights = []
 
+    def attach(self, node, prob=1):
+        #todo
+        #AGGIORNARE ADJACENCY MATRIX
+
+    def unattach(self, node_index, verbose=False):
+        #todo
 
 
     def setSeed(self):
