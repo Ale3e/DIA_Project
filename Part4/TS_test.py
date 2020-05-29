@@ -52,5 +52,5 @@ plot_beta(x, wins[0], (plays[0] - wins[0]), 0, 1, cdf=True, color='red', lw=2, l
 plot_beta(x, wins[1], (plays[1] - wins[1]), 0, 1, cdf=True, color='blue', lw=2, ls='-', alpha=0.5, label='pdf')
 plot_beta(x, wins[2], (plays[2] - wins[2]), 0, 1, cdf=True, color='green', lw=2, ls='-', alpha=0.5, label='pdf')
 plt.legend()
-#plt.show()
+plt.show()
 
