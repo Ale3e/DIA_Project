@@ -3,81 +3,82 @@ import networkx as nx
 import matplotlib.pyplot as plt
 
 
-def generate_graph(n_nodes, k, p, seed):
+def generate_graph(n_nodes, k, probabilities, seed):
     """
     Returns a small world network with n nodes,
     starting with each node connected to its k nearest neighbors,
-    and rewiring probability p
+    and rewiring "probability"
     """
 
-    graph = nx.newman_watts_strogatz_graph(n_nodes, k, p, seed=seed)
+    graph = nx.newman_watts_strogatz_graph(n_nodes, k, probabilities, seed=seed)
 
     nx.set_node_attributes(graph, 0, 'id')
     nx.set_node_attributes(graph, 0.0, 'cost')
-    nx.set_node_attributes(graph, 0, 'active')
-    nx.set_node_attributes(graph, 0, 'inactive')
-    nx.set_node_attributes(graph, 0, 'susceptible')
+    nx.set_node_attributes(graph, 'susceptible', 'status')
     nx.set_edge_attributes(graph, 0.0, 'prob')
 
-    prob_matrix = np.zeros(n_nodes)
+    for n in range(graph.number_of_nodes()):
+        graph.nodes[n]['id'] = n
 
     return graph
 
 
-def weight_edges(graph, f):
+def weight_edges(graph, features):
     """ Sets a probability to each edge based on a linear combination of 4 features
     Input: graph -- networkx Graph object
     f -- list of features probability
     """
 
     for edge in graph.edges():
-        p = np.random.binomial(1, 0.5, size=len(f))
-        graph[edge[0]][edge[1]]['prob'] = round(sum(x * y for x, y in zip(p, f)), 2)
+        probability = np.random.binomial(1, 0.5, size=len(features))
+        graph[edge[0]][edge[1]]['prob'] = round(sum(x * y for x, y in zip(probability, features)), 2)
 
     return graph
+
 
 def weight_nodes(graph):
-    #todo
+    """
+    :param graph: input graph with probabilities on edges ONLY!!!
+    :return: graph with cost of every node based on the probability of the edges starting from it
+    """
+    for node_idx in range(graph.number_of_nodes()):
+        weight = []
+        for node in graph.neighbors(node_idx):
+            weight.append(graph[node_idx][node]['prob'])
+        graph.nodes[node_idx]['cost'] = round(sum(weight), 2)
+
     return graph
 
 
-feat = [0.10, 0.08, 0.05, 0.02]
-p = np.random.binomial(1, 0.5, size=len(feat))
+features = [0.10, 0.08, 0.05, 0.02]
 
-print(p)
-q = round(sum(x * y for x, y in zip(p, feat)), 2)
-print(q)
-
-
-G = generate_graph(1000, 5, 0.05, 123)
-G_prob = weight_edges(G, feat)
+G = generate_graph(100, 5, 0.05, 123)
+G = weight_edges(G, features)
+G = weight_nodes(G)
 
 print(nx.info(G))
 
 print(G.adj[0])
 
 
-
-# set ids, print node attributes and of adj nodes
-# for g in range(G.number_of_nodes()):
-#     G.nodes[g]['id'] = g
-#
-# for g in range(G.number_of_nodes()):
-#     print("\nNode :")
-#     print(G.nodes[g])
-#     print("Has the following adjacent nodes: ")
-#     for n in G.neighbors(g):
-#         print(n)
-#         print(G.nodes[n])
-
+# print node attributes and of adj nodes with the influence prob
+for node_idx in range(G.number_of_nodes()):
+    weight = []
+    print("\nNode :")
+    print(G.nodes[node_idx])
+    print("Has the following adjacent nodes: ")
+    for node in G.neighbors(node_idx):
+        print(node)
+        print(G.nodes[node])
+        print(G[node_idx][node]['prob'])
 
 # print edges and their probability
-n = 0
-for e in G.edges():
-    print(e)
-    print(G[e[0]][e[1]]['prob'])
-    n += 1
-    print(n)
+# n = 0
+# for edge in G.edges():
+#     print(edge)
+#     print(G[edge[0]][edge[1]]['prob'])
+#     n += 1
+#     print(n)
 
 # spring layout graph plot
 # pos = nx.spring_layout(G)
