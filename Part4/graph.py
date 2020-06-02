@@ -50,44 +50,47 @@ def weight_nodes(graph):
     return graph
 
 
-features = [0.10, 0.08, 0.05, 0.02]
 
-G = generate_graph(100, 5, 0.05, 123)
-G = weight_edges(G, features)
-G = weight_nodes(G)
+if __name__ == "__main__":
 
-print(nx.info(G))
+    features = [0.10, 0.08, 0.05, 0.02]
 
-print(G.adj[0])
+    G = generate_graph(100, 5, 0.05, 123)
+    G = weight_edges(G, features)
+    G = weight_nodes(G)
+
+    print(nx.info(G))
+
+    print(G.adj[0])
 
 
-# print node attributes and of adj nodes with the influence prob
-for node_idx in range(G.number_of_nodes()):
-    weight = []
-    print("\nNode :")
-    print(G.nodes[node_idx])
-    print("Has the following adjacent nodes: ")
-    for node in G.neighbors(node_idx):
-        print(node)
-        print(G.nodes[node])
-        print(G[node_idx][node]['prob'])
+    # print node attributes and of adj nodes with the influence prob
+    for node_idx in range(G.number_of_nodes()):
+        weight = []
+        print("\nNode :")
+        print(G.nodes[node_idx])
+        print("Has the following adjacent nodes: ")
+        for node in G.neighbors(node_idx):
+            print(node)
+            print(G.nodes[node])
+            print(G[node_idx][node]['prob'])
 
-# print edges and their probability
-# n = 0
-# for edge in G.edges():
-#     print(edge)
-#     print(G[edge[0]][edge[1]]['prob'])
-#     n += 1
-#     print(n)
+    # print edges and their probability
+    # n = 0
+    # for edge in G.edges():
+    #     print(edge)
+    #     print(G[edge[0]][edge[1]]['prob'])
+    #     n += 1
+    #     print(n)
 
-# spring layout graph plot
-# pos = nx.spring_layout(G)
-# plt.figure(figsize=(12, 12))
-# nx.draw_networkx(G, pos)
-# plt.show()
+    # spring layout graph plot
+    # pos = nx.spring_layout(G)
+    # plt.figure(figsize=(12, 12))
+    # nx.draw_networkx(G, pos)
+    # plt.show()
 
-# circular layout graph plot
-# pos = nx.circular_layout(G)
-# plt.figure(figsize=(12, 12))
-# nx.draw_networkx(G, pos)
-# plt.show()
+    # circular layout graph plot
+    # pos = nx.circular_layout(G)
+    # plt.figure(figsize=(12, 12))
+    # nx.draw_networkx(G, pos)
+    # plt.show()
