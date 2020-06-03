@@ -6,8 +6,61 @@ from graph import generate_graph, weight_nodes, weight_edges
 #graph.nodes() = {0: {'id': 0, 'cost': 0.6, 'status': 'susceptible'}, 1: {'id': 1, 'cost': 0.38, 'status': 'susceptible'}, 2: {'id'...
 
 def influence_cascade(graph, seed_set):
-    #todo
-    return
+    """
+    Simulates an influence cascade in a graph
+    :param graph: input graph of susceptible nodes
+    :param seed_set: seed set from which propagates the influence cascade
+    :return: returns a list with a[0]: the sum of the costs of the nodes influenced during the IC
+                            and a[1]: list of activated nodes during the IC
+    """
+
+    t = 0
+    weighted_spread = 0.0
+    triggered_nodes = []
+    todo_nodes = seed_set
+
+    print(todo_nodes)
+
+    # activate seed nodes
+    for i in range(len(todo_nodes)):
+        graph.nodes[todo_nodes[i]]['status'] = 'active'
+
+    # IC
+    # for node in todo_nodes:
+    while len(todo_nodes) > 0:
+        node = todo_nodes[0]
+        print("At time: ")
+        print(t)
+        print(" from node ")
+        print(graph.nodes[node]['id'])
+
+        triggered_nodes.append(graph.nodes[node]['id'])
+
+        print("influence propagates to node: ")
+
+        for adj_node in graph.neighbors(node):
+
+            if graph.nodes[adj_node]['status'] == 'susceptible':
+
+                if np.random.rand() <= graph[node][adj_node]['prob']:
+                    print(graph.nodes[adj_node]['id'])
+
+                    graph.nodes[adj_node]['status'] = 'active'
+
+                    todo_nodes.append(graph.nodes[adj_node]['id'])
+
+        weighted_spread += graph.nodes[node]['cost']
+        weighted_spread = round(weighted_spread, 2)
+        graph.nodes[node]['status'] = 'inactive'
+        todo_nodes.remove(node)
+        t += 1
+
+    # reset status of nodes of the graph to susceptible
+    for n in graph.nodes():
+        graph.nodes[n]['status'] = 'susceptible'
+
+    a = [weighted_spread, triggered_nodes]
+    return a
 
 
 if __name__ == "__main__":
@@ -20,6 +73,9 @@ if __name__ == "__main__":
 
     seed_set = [0, 1, 2, 3]
 
+
+    #FUNCTION CODE BLOCK START
+    '''
     t = 0
     weighted_spread = 0.0
     triggered_nodes = []
@@ -38,7 +94,6 @@ if __name__ == "__main__":
         print("At time: ")
         print(t)
         print(" from node ")
-        print(node)
         print(graph.nodes[node]['id'])
 
         triggered_nodes.append(graph.nodes[node]['id'])
@@ -58,16 +113,30 @@ if __name__ == "__main__":
                     todo_nodes.append(graph.nodes[adj_node]['id'])
 
         weighted_spread += graph.nodes[node]['cost']
+        weighted_spread = round(weighted_spread, 2)
         graph.nodes[node]['status'] = 'inactive'
         todo_nodes.remove(node)
         t += 1
+
+    #reset status of nodes of the graph to susceptible
+    for n in graph.nodes():
+        graph.nodes[n]['status'] = 'susceptible'
+    '''
+    #FUNCTION CODE BLOCK END
+
+    a = influence_cascade(graph, seed_set)
+
+    weighted_spread = a[0]
+    triggered_nodes = a[1]
 
     print(" Weighted spread is : ")
     print(weighted_spread)
 
     print("Triggered nodes are: ")
     for n in range(len(triggered_nodes)):
-        print("Node: " + str(triggered_nodes[n]) + graph.nodes[triggered_nodes[n]['status']])
+        node = triggered_nodes[n]
+        status = graph.nodes[node]['status']
+        print(f'Node: ' +str(node)+' is '+status)
 
 
 
