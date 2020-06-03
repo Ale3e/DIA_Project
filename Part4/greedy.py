@@ -1,5 +1,8 @@
-from graph import *
+from graph import generate_graph, weight_nodes, weight_edges
+from information_cascade import information_cascade
 import networkx as nx
+import numpy as np
+import tqdm
 import time
 
 
@@ -15,50 +18,65 @@ def celf(graph, budget, delta=0.95):
     remaining_budget = budget
     epsilon = 0.1
 
+    return (    )
 
 
-    marg_gain = [IC(graph, [node], p, mc) for node in range(graph.vcount())]
+if __name__ == "__main__":
+
+    features = [0.10, 0.08, 0.05, 0.02]
+
+    graph = generate_graph(10000, 5, 0.05, 123)
+    graph = weight_edges(graph, features)
+    graph = weight_nodes(graph)
+
+    budget = 100
+
+    start_time = time.time()
+    seeds = []
+    remaining_budget = budget
+    epsilon = 0.1
+    delta = 0.2
+
+    # evaluate each node in the graph for marginal increase in greedy algorithm
+    marginal_gain = dict.fromkeys(graph.nodes, 0)
+    nodes_left_to_evaluate = set(marginal_gain.keys())
+    set_len = len(nodes_left_to_evaluate)
+    print(set_len)
+    print(type(set_len))
+
+
+    #while remaining_budget >=0 and remaining_budget >= min(graph.nodes(data='cost')):
+
+    for node in tqdm.tqdm(range(set_len)):
+
+        cost = graph.nodes[node]['cost']
+        n_simulations = int((1 / (epsilon ** 2)) * np.log(len(seeds + [node]) + 1) * np.log(1 / delta))
+        IC_cumulative = 0.0
+
+        for n in range(n_simulations):
+            node_list = []
+            IC_result = information_cascade(graph, node)[0]
+            IC_cumulative += IC_result
+
+        spread = round(((IC_cumulative/n_simulations) / cost), 5)
+        marginal_gain[node] = spread
+
+    #prendi best nodo da aggiungere ai seeds (max(marginal_gain)
+    #togliere nodo aggiunto ai seed dalla lista @node_left_to_evaluate
+    #ripeti
 
 
 
-    Q = sorted(zip(range(graph.vcount()), marg_gain), key=lambda x: x[1], reverse=True)
+    #print(min(graph.nodes(data='cost')))
 
-    # Select the first node and remove from candidate list
-    S, spread, SPREAD = [Q[0][0]], Q[0][1], [Q[0][1]]
-    Q, LOOKUPS, timelapse = Q[1:], [graph.vcount()], [time.time() - start_time]
+    #while remaining_budget >=0 and remaining_budget >= min(graph.nodes(data='cost')):
 
-    # --------------------
-    # Find the next k-1 nodes using the list-sorting procedure
-    # --------------------
+    print(marginal_gain)
+    print(round(sum(marginal_gain.values())/len(marginal_gain), 5))
 
-    for _ in range(seed - 1):
 
-        check, node_lookup = False, 0
 
-        while not check:
-            # Count the number of times the spread is computed
-            node_lookup += 1
 
-            # Recalculate spread of top node
-            current = Q[0][0]
 
-            # Evaluate the spread function and store the marginal gain in the list
-            Q[0] = (current, IC(graph, S + [current], p, mc) - spread)
 
-            # Re-sort the list
-            Q = sorted(Q, key=lambda x: x[1], reverse=True)
 
-            # Check if previous top node stayed on top after the sort
-            check = (Q[0][0] == current)
-
-        # Select the next node
-        spread += Q[0][1]
-        S.append(Q[0][0])
-        SPREAD.append(spread)
-        LOOKUPS.append(node_lookup)
-        timelapse.append(time.time() - start_time)
-
-        # Remove the selected node from the list
-        Q = Q[1:]
-
-    return (S, SPREAD, timelapse, LOOKUPS)
