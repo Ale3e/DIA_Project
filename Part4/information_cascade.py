@@ -18,7 +18,10 @@ def information_cascade(graph, seed_set):
     weighted_spread = 0.0
     triggered_nodes = []
     todo_nodes = []
-    todo_nodes.append(seed_set)
+
+    #todo_nodes.append(seed_set)
+    for seed in seed_set:
+        todo_nodes.append(seed)
 
     #print(todo_nodes)
 

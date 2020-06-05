@@ -43,44 +43,63 @@ if __name__ == "__main__":
 
     print(nodes_left_to_evaluate)
     print(type(nodes_left_to_evaluate))
-    print(graph.nodes(data='cost'))
-    print(type((graph.nodes(data='cost'))))
-    print(graph.nodes.data('cost'))
-    var = min(graph.nodes(data='cost'))
-    print(var)
 
-    while remaining_budget >= 0 and remaining_budget >= min(graph.nodes(data='cost')) and nodes_left_to_evaluate:
+
+    all_node_weight = sum(set([graph.nodes[n]['cost'] for n in graph.nodes]))
+    print(all_node_weight)
+    spread = 0.0
+    print(spread)
+
+    while remaining_budget >= 0 and remaining_budget >= min(set([graph.nodes[n]['cost'] for n in graph.nodes])) and nodes_left_to_evaluate:
 
         for n in nodes_left_to_evaluate:
 
-            cost = graph.nodes[n]['cost']
-            n_simulations = int((1 / (epsilon ** 2)) * np.log(len(seeds + [n]) + 1) * np.log(1 / delta))
-            IC_cumulative = 0.0
+            if remaining_budget >= graph.nodes[n]['cost']:
+                
+                cost = graph.nodes[n]['cost']
+                n_simulations = int((1 / (epsilon ** 2)) * np.log(len(seeds + [n]) + 1) * np.log(1 / delta))
+                
 
-            for simulation in range(n_simulations):
-                node_list = []
-                IC_result = information_cascade(graph, n)[0]
-                IC_cumulative += IC_result
+                IC_cumulative = []
 
-            spread = round(((IC_cumulative / n_simulations) / cost), 3)
-            marginal_gain[n] = spread
+                
+                for simulation in range(n_simulations):
+                    
+                    IC_result = information_cascade(graph, seeds + [n])[0]
+                    IC_cumulative.append(IC_result)
+                
+                spread_node = round((np.mean(IC_cumulative) / cost), 3)
+                marginal_gain[n] = spread_node
 
+
+
+        # prendi best nodo da aggiungere ai seeds 
         spread_max = max(marginal_gain.values())
+        spread += spread_max
         index_max = list(marginal_gain.keys())[list(marginal_gain.values()).index(spread_max)]
         remaining_budget -= graph.nodes[index_max]['cost']
         seeds.append(index_max)
 
+        # togliere nodo aggiunto ai seed dalla lista @node_left_to_evaluate
         nodes_left_to_evaluate.remove(index_max)
         marginal_gain.pop(index_max)
 
-    # prendi best nodo da aggiungere ai seeds (max(marginal_gain)
-    # togliere nodo aggiunto ai seed dalla lista @node_left_to_evaluate
-    # ripeti
 
     # print(min(graph.nodes(data='cost')))
 
     # while remaining_budget >=0 and remaining_budget >= min(graph.nodes(data='cost')):
 
+    print('seeds: ')
     print(seeds)
-    print(marginal_gain)
-    print(round(sum(marginal_gain.values()) / len(marginal_gain), 3))
+    print('nodes left to evaluate: ')
+    print(nodes_left_to_evaluate)
+    #print(marginal_gain)
+    print('Mean marginal gain per node:')
+    if (all_node_weight <= budget):
+        print("Budget too high, you bought the whole network")
+    else:
+        print(round(sum(marginal_gain.values()) / len(marginal_gain), 3))
+    print('Remaining budget:')
+    print(remaining_budget)
+    print('Spread: ')
+    print(spread_max)
