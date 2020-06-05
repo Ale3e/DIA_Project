@@ -5,11 +5,11 @@ from graph import generate_graph, weight_nodes, weight_edges
 #struttura nodi grafo
 #graph.nodes() = {0: {'id': 0, 'cost': 0.6, 'status': 'susceptible'}, 1: {'id': 1, 'cost': 0.38, 'status': 'susceptible'}, 2: {'id'...
 
-def influence_cascade(graph, seed_set):
+def information_cascade(graph, seed_set):
     """
-    Simulates an influence cascade in a graph
+    Simulates an information cascade in a graph
     :param graph: input graph of susceptible nodes
-    :param seed_set: seed set from which propagates the influence cascade
+    :param seed_set: seed set from which propagates the information cascade
     :return: returns a list with a[0]: the sum of the costs of the nodes influenced during the IC
                             and a[1]: list of activated nodes during the IC
     """
@@ -17,9 +17,10 @@ def influence_cascade(graph, seed_set):
     t = 0
     weighted_spread = 0.0
     triggered_nodes = []
-    todo_nodes = seed_set
+    todo_nodes = []
+    todo_nodes.append(seed_set)
 
-    print(todo_nodes)
+    #print(todo_nodes)
 
     # activate seed nodes
     for i in range(len(todo_nodes)):
@@ -29,21 +30,21 @@ def influence_cascade(graph, seed_set):
     # for node in todo_nodes:
     while len(todo_nodes) > 0:
         node = todo_nodes[0]
-        print("At time: ")
-        print(t)
-        print(" from node ")
-        print(graph.nodes[node]['id'])
+        # print("At time: ")
+        # print(t)
+        # print(" from node ")
+        # print(graph.nodes[node]['id'])
 
         triggered_nodes.append(graph.nodes[node]['id'])
 
-        print("influence propagates to node: ")
+        #print("information propagates to node: ")
 
         for adj_node in graph.neighbors(node):
 
             if graph.nodes[adj_node]['status'] == 'susceptible':
 
                 if np.random.rand() <= graph[node][adj_node]['prob']:
-                    print(graph.nodes[adj_node]['id'])
+                    #print(graph.nodes[adj_node]['id'])
 
                     graph.nodes[adj_node]['status'] = 'active'
 
@@ -98,7 +99,7 @@ if __name__ == "__main__":
 
         triggered_nodes.append(graph.nodes[node]['id'])
 
-        print("influence propagates to node: ")
+        print("information propagates to node: ")
 
         for adj_node in graph.neighbors(node):
 
@@ -124,7 +125,7 @@ if __name__ == "__main__":
     '''
     #FUNCTION CODE BLOCK END
 
-    a = influence_cascade(graph, seed_set)
+    a = information_cascade(graph, seed_set)[0]
 
     weighted_spread = a[0]
     triggered_nodes = a[1]
