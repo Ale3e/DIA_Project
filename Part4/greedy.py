@@ -6,19 +6,66 @@ import tqdm
 import time
 
 
-def celf(graph, budget, delta=0.95):
+def greedy_celf(graph, budget, delta=0.95):
     """
     Cost efficient lazy forward algorithm, by Leskovec et al. (2007)
     Input:  graph object, number of seed nodes
-    Output: optimal seed set, resulting spread, time for each iteration
+    Output: a[0] remaining budget, a[1] optimal seed set
     """
 
-    start_time = time.time()
-    seed = []
+    seeds = []
     remaining_budget = budget
     epsilon = 0.1
+    delta = delta
 
-    return (    )
+    # evaluate each node in the graph for marginal increase in greedy algorithm
+    marginal_gain = dict.fromkeys(graph.nodes, 0)
+    nodes_left_to_evaluate = set(marginal_gain.keys())
+    all_node_weight = sum(set([graph.nodes[g]['cost'] for g in graph.nodes]))
+
+    if budget >= all_node_weight:
+        print('Error: budget too high, you can buy all nodes')
+        return 0
+
+    while remaining_budget > 0 and nodes_left_to_evaluate:
+
+        for n in nodes_left_to_evaluate:  # aggiorno marginal_gain per ogni nodo [n]
+
+            if remaining_budget >= graph.nodes[n]['cost']:  # calcola solo lo spread dei nodi che posso permettermi
+
+                cost = graph.nodes[n]['cost']
+                n_simulations = int((1 / (epsilon ** 2)) * np.log(len(seeds + [n]) + 1) * np.log(1 / delta))
+                IC_cumulative = []
+
+                for simulation in range(n_simulations):
+                    # [0]returns the spread of the influenced nodes in the cascade
+                    IC_result = information_cascade(graph, seeds + [n])[0]
+                    IC_cumulative.append(IC_result)
+
+                spread_node = round((np.mean(IC_cumulative) / cost), 3)
+                marginal_gain[n] = spread_node
+            else:  # metti spread a zero per i nodi che non possono permettermi
+                marginal_gain[n] = 0.0
+
+        gain_max = max(marginal_gain.values())
+
+        # prendi best nodo da aggiungere ai seeds
+        index_max = list(marginal_gain.keys())[list(marginal_gain.values()).index(gain_max)]
+        remaining_budget -= graph.nodes[index_max]['cost']
+        remaining_budget = round(remaining_budget, 3)
+        seeds.append(index_max)
+
+        # togliere nodo aggiunto ai seed dalla lista @node_left_to_evaluate
+        nodes_left_to_evaluate.remove(index_max)
+        marginal_gain.pop(index_max)
+
+    cost = graph.nodes[seeds[len(seeds) - 1]]['cost']
+    remaining_budget += cost
+    remaining_budget = round(remaining_budget, 3)
+    seeds.pop()
+
+    a = [remaining_budget, seeds]
+    return a
 
 
 if __name__ == "__main__":
@@ -29,77 +76,30 @@ if __name__ == "__main__":
     graph = weight_edges(graph, features)
     graph = weight_nodes(graph)
 
-    budget = 10
+    budget = 2
+    delta = [0.9, 0.7, 0.5, 0.3, 0.2]
+    N_simulations = 1000
 
-    start_time = time.time()
-    seeds = []
-    remaining_budget = budget
-    epsilon = 0.1
-    delta = 0.9
+    
+    
+    for d in delta:
+        
+        start_time = time.time()
+        greedy = []
+        greedy = greedy_celf(graph, budget, delta=d)
+        remaining_budget = greedy[0]
+        seeds = greedy[1]
+        spread_cumulative = []
+        print('Simulation with delta : {}'.format(d))
+        
+        for n in range(N_simulations):
+            IC = information_cascade(graph, seeds)[0]
+            spread_cumulative.append(IC)
 
-    # evaluate each node in the graph for marginal increase in greedy algorithm
-    marginal_gain = dict.fromkeys(graph.nodes, 0)
-    nodes_left_to_evaluate = set(marginal_gain.keys())
+        spread = np.mean(spread_cumulative)
+        print('Seeds: {}'.format(seeds))
+        print('Remaining budget: {}'.format(round(remaining_budget, 3)))
+        print('Spread: {}'.format(round(float(spread), 3)))
+        print('Time for simulation: {} \n'.format(time.time()-start_time))
 
-    print(nodes_left_to_evaluate)
-    print(type(nodes_left_to_evaluate))
-
-
-    all_node_weight = sum(set([graph.nodes[n]['cost'] for n in graph.nodes]))
-    print(all_node_weight)
-    spread = 0.0
-    print(spread)
-
-    while remaining_budget >= 0 and remaining_budget >= min(set([graph.nodes[n]['cost'] for n in graph.nodes])) and nodes_left_to_evaluate:
-
-        for n in nodes_left_to_evaluate:
-
-            if remaining_budget >= graph.nodes[n]['cost']:
-                
-                cost = graph.nodes[n]['cost']
-                n_simulations = int((1 / (epsilon ** 2)) * np.log(len(seeds + [n]) + 1) * np.log(1 / delta))
-                
-
-                IC_cumulative = []
-
-                
-                for simulation in range(n_simulations):
-                    
-                    IC_result = information_cascade(graph, seeds + [n])[0]
-                    IC_cumulative.append(IC_result)
-                
-                spread_node = round((np.mean(IC_cumulative) / cost), 3)
-                marginal_gain[n] = spread_node
-
-
-
-        # prendi best nodo da aggiungere ai seeds 
-        spread_max = max(marginal_gain.values())
-        spread += spread_max
-        index_max = list(marginal_gain.keys())[list(marginal_gain.values()).index(spread_max)]
-        remaining_budget -= graph.nodes[index_max]['cost']
-        seeds.append(index_max)
-
-        # togliere nodo aggiunto ai seed dalla lista @node_left_to_evaluate
-        nodes_left_to_evaluate.remove(index_max)
-        marginal_gain.pop(index_max)
-
-
-    # print(min(graph.nodes(data='cost')))
-
-    # while remaining_budget >=0 and remaining_budget >= min(graph.nodes(data='cost')):
-
-    print('seeds: ')
-    print(seeds)
-    print('nodes left to evaluate: ')
-    print(nodes_left_to_evaluate)
-    #print(marginal_gain)
-    print('Mean marginal gain per node:')
-    if (all_node_weight <= budget):
-        print("Budget too high, you bought the whole network")
-    else:
-        print(round(sum(marginal_gain.values()) / len(marginal_gain), 3))
-    print('Remaining budget:')
-    print(remaining_budget)
-    print('Spread: ')
-    print(spread_max)
+    

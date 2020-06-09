@@ -23,8 +23,6 @@ def information_cascade(graph, seed_set):
     for seed in seed_set:
         todo_nodes.append(seed)
 
-    #print(todo_nodes)
-
     # activate seed nodes
     for i in range(len(todo_nodes)):
         graph.nodes[todo_nodes[i]]['status'] = 'active'
@@ -77,71 +75,26 @@ if __name__ == "__main__":
 
     seed_set = [0, 1, 2, 3]
 
+    # a = []
+    # a = information_cascade(graph, seed_set)
+    #
+    # weighted_spread = a[0]
+    # triggered_nodes = a[1]
+    #
+    # print(" Weighted spread is : {}".format(weighted_spread))
+    # print("Triggered nodes are: ")
+    # for n in range(len(triggered_nodes)):
+    #     node = triggered_nodes[n]
+    #     cost = graph.nodes[node]['cost']
+    #     print('Node: {} costs {}'.format(str(node), cost))
 
-    #FUNCTION CODE BLOCK START
-    '''
-    t = 0
-    weighted_spread = 0.0
-    triggered_nodes = []
-    todo_nodes = seed_set
+    seed_set_1 = []
 
-    print(todo_nodes)
-
-    #activatye seed nodes
-    for i in range(len(todo_nodes)):
-        graph.nodes[todo_nodes[i]]['status'] = 'active'
-
-    #IC
-    #for node in todo_nodes:
-    while len(todo_nodes) > 0:
-        node = todo_nodes[0]
-        print("At time: ")
-        print(t)
-        print(" from node ")
-        print(graph.nodes[node]['id'])
-
-        triggered_nodes.append(graph.nodes[node]['id'])
-
-        print("information propagates to node: ")
-
-        for adj_node in graph.neighbors(node):
-
-            if graph.nodes[adj_node]['status'] == 'susceptible':
-
-                if np.random.rand() <= graph[node][adj_node]['prob']:
-
-                    print(graph.nodes[adj_node]['id'])
-
-                    graph.nodes[adj_node]['status'] = 'active'
-
-                    todo_nodes.append(graph.nodes[adj_node]['id'])
-
-        weighted_spread += graph.nodes[node]['cost']
-        weighted_spread = round(weighted_spread, 2)
-        graph.nodes[node]['status'] = 'inactive'
-        todo_nodes.remove(node)
-        t += 1
-
-    #reset status of nodes of the graph to susceptible
-    for n in graph.nodes():
-        graph.nodes[n]['status'] = 'susceptible'
-    '''
-    #FUNCTION CODE BLOCK END
-
-    a = information_cascade(graph, seed_set)[0]
-
-    weighted_spread = a[0]
-    triggered_nodes = a[1]
-
-    print(" Weighted spread is : ")
-    print(weighted_spread)
-
-    print("Triggered nodes are: ")
-    for n in range(len(triggered_nodes)):
-        node = triggered_nodes[n]
-        status = graph.nodes[node]['status']
-        print(f'Node: ' +str(node)+' is '+status)
-
+    for x in range(0, 10):
+        seed_set_1.append(x)
+        b = []
+        b = information_cascade(graph, seed_set_1)
+        print('With {} nodes the spread in {}'.format(x, b[0]))
 
 
 
