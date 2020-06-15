@@ -1,5 +1,6 @@
 import networkx as nx
 import numpy as np
+import tqdm
 from graph import generate_graph, weight_nodes, weight_edges
 
 #struttura nodi grafo
@@ -73,7 +74,9 @@ if __name__ == "__main__":
     graph = weight_edges(graph, features)
     graph = weight_nodes(graph)
 
-    seed_set = [0, 1, 2, 3]
+    N_simulations = 100
+    seed_set = [4, 8, 15, 16, 23, 42]
+    spread_simulation = []
 
     # a = []
     # a = information_cascade(graph, seed_set)
@@ -88,13 +91,24 @@ if __name__ == "__main__":
     #     cost = graph.nodes[node]['cost']
     #     print('Node: {} costs {}'.format(str(node), cost))
 
-    seed_set_1 = []
 
-    for x in range(0, 10):
-        seed_set_1.append(x)
-        b = []
-        b = information_cascade(graph, seed_set_1)
-        print('With {} nodes the spread in {}'.format(x, b[0]))
+    means = []
+    for j in tqdm.tqdm(range(10)):
+        for n in range(N_simulations):
+            spread_simulation.append(information_cascade(graph, seed_set)[0])
+        mean_spread = np.mean(spread_simulation)
+        mean_spread = round(mean_spread, 3)
+        means.append(mean_spread)
+    print(means)
+
+
+    # seed_set_1 = []
+    # for x in range(0, 10):
+    #     seed_set_1.append(x)
+    #     b = []
+    #     b = information_cascade(graph, seed_set_1)
+    #     print('With {} nodes the spread in {}'.format(x, b[0]))
+
 
 
 

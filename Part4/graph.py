@@ -28,8 +28,11 @@ def weight_edges(graph, features):
     Input: graph -- networkx Graph object
     f -- list of features probability
     """
+    # if seed == None: seed_val = 0
+    # else: seed_val = seed
 
     for edge in graph.edges():
+        #np.random.seed(0)
         probability = np.random.binomial(1, 0.5, size=len(features))
         graph[edge[0]][edge[1]]['prob'] = round(sum(x * y for x, y in zip(probability, features)), 2)
 
@@ -45,7 +48,7 @@ def weight_nodes(graph):
         weight = []
         for node in graph.neighbors(node_idx):
             weight.append(graph[node_idx][node]['prob'])
-        graph.nodes[node_idx]['cost'] = round(sum(weight), 2)
+        graph.nodes[node_idx]['cost'] = round(sum(weight) + 0.5, 2)
 
     return graph
 

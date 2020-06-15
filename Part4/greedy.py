@@ -1,9 +1,16 @@
 from graph import generate_graph, weight_nodes, weight_edges
 from information_cascade import information_cascade
-import networkx as nx
+import matplotlib.pyplot as plt
 import numpy as np
-import tqdm
 import time
+
+'''
+Problemi:
+1. levare dai seeds l'ultimo nodo che viene aggiunto quando non potremmo me pare na stronzata
+2. forse la differenza tra i nodi del grafo è troppo piccola e per questo non da differenze significative
+3. nella formula per il calcolo delle simulazioni non è detto che solo il delta sia da modificare
+'''
+
 
 
 def greedy_celf(graph, budget, delta=0.95):
@@ -23,11 +30,12 @@ def greedy_celf(graph, budget, delta=0.95):
     nodes_left_to_evaluate = set(marginal_gain.keys())
     all_node_weight = sum(set([graph.nodes[g]['cost'] for g in graph.nodes]))
 
+
     if budget >= all_node_weight:
         print('Error: budget too high, you can buy all nodes')
         return 0
 
-    while remaining_budget > 0 and nodes_left_to_evaluate:
+    while remaining_budget > 0 and nodes_left_to_evaluate and min(set([graph.nodes[g]['cost'] for g in graph.nodes])) <= remaining_budget :
 
         for n in nodes_left_to_evaluate:  # aggiorno marginal_gain per ogni nodo [n]
 
@@ -42,7 +50,7 @@ def greedy_celf(graph, budget, delta=0.95):
                     IC_result = information_cascade(graph, seeds + [n])[0]
                     IC_cumulative.append(IC_result)
 
-                spread_node = round((np.mean(IC_cumulative) / cost), 3)
+                spread_node = round(np.mean(IC_cumulative) , 3)
                 marginal_gain[n] = spread_node
             else:  # metti spread a zero per i nodi che non possono permettermi
                 marginal_gain[n] = 0.0
@@ -59,10 +67,10 @@ def greedy_celf(graph, budget, delta=0.95):
         nodes_left_to_evaluate.remove(index_max)
         marginal_gain.pop(index_max)
 
-    cost = graph.nodes[seeds[len(seeds) - 1]]['cost']
-    remaining_budget += cost
-    remaining_budget = round(remaining_budget, 3)
-    seeds.pop()
+    # cost = graph.nodes[seeds[len(seeds) - 1]]['cost']
+    # remaining_budget += cost
+    # remaining_budget = round(remaining_budget, 3)
+    # seeds.pop()
 
     a = [remaining_budget, seeds]
     return a
@@ -70,15 +78,19 @@ def greedy_celf(graph, budget, delta=0.95):
 
 if __name__ == "__main__":
 
-    features = [0.10, 0.08, 0.05, 0.02]
+    features = [0.1, 0.08, 0.05, 0.02]
 
-    graph = generate_graph(100, 5, 0.05, 123)
+    graph = generate_graph(100, 5, 0.1, 1234)
     graph = weight_edges(graph, features)
     graph = weight_nodes(graph)
 
-    budget = 2
-    delta = [0.9, 0.7, 0.5, 0.3, 0.2]
+    budget = 5
+    delta = [0.95, 0.8, 0.4, 0.2]
     N_simulations = 1000
+    spreads = []
+
+    all_node_weight = sum(set([graph.nodes[g]['cost'] for g in graph.nodes]))
+    print('Weight of all nodes in the graph: {}'.format(round(all_node_weight, 3)))
 
     
     
@@ -88,7 +100,7 @@ if __name__ == "__main__":
         greedy = []
         greedy = greedy_celf(graph, budget, delta=d)
         remaining_budget = greedy[0]
-        seeds = greedy[1]
+        seeds = sorted(greedy[1])
         spread_cumulative = []
         print('Simulation with delta : {}'.format(d))
         
@@ -97,9 +109,14 @@ if __name__ == "__main__":
             spread_cumulative.append(IC)
 
         spread = np.mean(spread_cumulative)
-        print('Seeds: {}'.format(seeds))
+        spreads.append(spread)
+        print('Seeds: {}'.format(sorted(seeds)))
         print('Remaining budget: {}'.format(round(remaining_budget, 3)))
         print('Spread: {}'.format(round(float(spread), 3)))
         print('Time for simulation: {} \n'.format(time.time()-start_time))
+
+    plt.plot(delta, spreads)
+    plt.show()
+
 
     
