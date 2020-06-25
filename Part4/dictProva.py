@@ -41,21 +41,30 @@ if __name__ == "__main__":
     graph = weight_nodes(graph)
     budget = 5
 
-    superarm = set()
-    seeds = []
-    seeds = greedy_celf(graph, budget)[1]
-    
-    print('seeds are: {}'.format(seeds))
+    alpha = dict.fromkeys(graph.edges, 1)
+    beta = dict.fromkeys(graph.edges, 1)
 
-    for seed in seeds:
-        for u, v in graph.edges():
-            if (u == seed): superarm.add((u, v))
-            if (v == seed) and (u, v) not in superarm: superarm.add((u, v))
-    print(superarm)
+    for node1, node2 in graph.edges():
+        prob_ts = round(np.random.beta(alpha[(node1,node2)], beta[(node1,node2)]), 3)
+        print(prob_ts)
+        graph[node1][node2]['prob'] = prob_ts
 
-    for u,v in superarm:
-        if graph[u][v] == None:
-            raise Exception('({},{}) is not a valid edge of the graph')
+
+    # superarm = set()
+    # seeds = []
+    # seeds = greedy_celf(graph, budget)[1]
+    #
+    # print('seeds are: {}'.format(seeds))
+    #
+    # for seed in seeds:
+    #     for u, v in graph.edges():
+    #         if (u == seed): superarm.add((u, v))
+    #         if (v == seed) and (u, v) not in superarm: superarm.add((u, v))
+    # print(superarm)
+    #
+    # for u,v in superarm:
+    #     if graph[u][v] == None:
+    #         raise Exception('({},{}) is not a valid edge of the graph')
 
 
 

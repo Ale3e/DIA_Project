@@ -7,7 +7,7 @@ import time
 import networkx as nx
 import matplotlib.pyplot as plt
 import tqdm
-from CUCB_learner import *
+from TS_learner import *
 
 if __name__ == "__main__":
     features = [0.1, 0.08, 0.05, 0.02]
@@ -17,8 +17,9 @@ if __name__ == "__main__":
     graph = weight_nodes(graph)
 
     budget = 7.5
-    delta = 0.95
-    N_simulations = 100
+    delta = 0.5
+
+    greedy_N_simulations = 1000
 
     # optimal with greedy_celf#
 
@@ -28,7 +29,7 @@ if __name__ == "__main__":
     opt_seeds = sorted(greedy[1])
     spread_cumulative = []
 
-    for n in range(N_simulations):
+    for n in range(greedy_N_simulations):
         IC = information_cascade(graph, opt_seeds)[0]
         spread_cumulative.append(IC)
 
@@ -44,15 +45,18 @@ if __name__ == "__main__":
     cumulative_spreads = []
     true_probs = get_probabilities(graph)
     env = Environment(graph)
-    ucb_learner = UCBLearner(graph, budget)
+    ts_learner = TSLearner(graph, budget)
 
-    for t in tqdm.tqdm(range(1000)):
+    N_simulations = 100
+    T = 200
+
+    for t in tqdm.tqdm(range(T)):
         start_time = time.time()
-        super_arm = ucb_learner.pull_superarm()
+        super_arm = ts_learner.pull_superarm()
         reward = env.round(super_arm)
-        ucb_learner.update(super_arm, reward)
+        ts_learner.update(super_arm, reward)
 
-        estimated_seeds = greedy_celf(ucb_learner.graph, budget)[1]
+        estimated_seeds = greedy_celf(ts_learner.graph, budget)[1]
 
         for n in range(N_simulations):
             IC = information_cascade(graph, estimated_seeds)[0]
@@ -65,13 +69,25 @@ if __name__ == "__main__":
 
     print('Opt-spread: {}'.format(opt_spread))
     print('Spreads: {}'.format(spreads))
-    regret = np.abs(opt_spread-spreads)
+    regret = np.abs(opt_spread - spreads)
 
-    #print(np.cumsum(np.abs((opt_spread - spreads))))
-    #plt.plot(np.cumsum(np.abs((opt_spread - spreads))))
-    plt.plot(np.cumsum(regret))
+    ### PLOT ###
+    plt.style.use('seaborn')  # pretty matplotlib plots
+    plt.rcParams['figure.figsize'] = (12, 8)
+    opt_spreads = []
+    for t in range(T): opt_spreads.append(opt_spread)
+
+
+
+    # print(np.cumsum(np.abs((opt_spread - spreads))))
+    # plt.plot(np.cumsum(np.abs((opt_spread - spreads))))
+    plt.plot(spreads, color='blue', label='TS')
+    plt.plot(opt_spreads, color='red', label='opt')
+    plt.xlabel('t')
+    plt.ylabel('Spread')
+    plt.title('TS_CMAB')
     plt.legend()
     plt.show()
 
     print('True probabilities: {}'.format(true_probs))
-    print('Estimated probabilities: {}'.format(list(ucb_learner.get_estimated_probabilities().values())))
+    print('Estimated probabilities: {}'.format(list(ts_learner.get_estimated_probabilities().values())))
