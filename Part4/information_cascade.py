@@ -78,6 +78,13 @@ if __name__ == "__main__":
     seed_set = [4, 8, 15, 16, 23, 42]
     spread_simulation = []
 
+    # for u, v in graph.edges():
+    #     print(u,v)
+    #     for j,k in graph.edges():
+    #         if (u,v) == (k,j):
+    #             print("Oh no")
+    #             break
+
     # a = []
     # a = information_cascade(graph, seed_set)
     #
@@ -100,6 +107,7 @@ if __name__ == "__main__":
         mean_spread = round(mean_spread, 3)
         means.append(mean_spread)
     print(means)
+
 
 
     # seed_set_1 = []

@@ -7,9 +7,12 @@ class Environment:
         self.probabilities = get_probabilities(graph)
 
     def round(self, pulled_arm):
-        success = np.random.binomial(1, self.probabilities)
-        active_edges = [edge for i, edge in enumerate(self.graph.edges) if success[i] == 1]
-        return active_edges
+        rewards = dict.fromkeys(pulled_arm, 0)
+        for (u, v) in rewards:
+            rewards[(u, v)] = np.random.binomial(1, self.graph[u][v]['prob'])
+        #print(rewards)
+        #active_edges = [i for i in success if success[i] == 1]
+        return rewards
 
 
 

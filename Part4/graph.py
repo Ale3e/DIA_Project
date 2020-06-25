@@ -55,7 +55,7 @@ def weight_nodes(graph):
 def get_probabilities(graph):
         p = []
         for node1, node2, data in graph.edges(data=True):
-            p.append(data['weight'])
+            p.append(data['prob'])
         return p
 
 

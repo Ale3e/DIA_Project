@@ -12,7 +12,6 @@ Problemi:
 '''
 
 
-
 def greedy_celf(graph, budget, delta=0.95):
     """
     Cost efficient lazy forward algorithm, by Leskovec et al. (2007)
@@ -30,12 +29,12 @@ def greedy_celf(graph, budget, delta=0.95):
     nodes_left_to_evaluate = set(marginal_gain.keys())
     all_node_weight = sum(set([graph.nodes[g]['cost'] for g in graph.nodes]))
 
-
     if budget >= all_node_weight:
         print('Error: budget too high, you can buy all nodes')
         return 0
 
-    while remaining_budget > 0 and nodes_left_to_evaluate and min(set([graph.nodes[g]['cost'] for g in graph.nodes])) <= remaining_budget :
+    while remaining_budget > 0 and nodes_left_to_evaluate and min(
+            set([graph.nodes[g]['cost'] for g in graph.nodes])) <= remaining_budget:
 
         for n in nodes_left_to_evaluate:  # aggiorno marginal_gain per ogni nodo [n]
 
@@ -50,7 +49,7 @@ def greedy_celf(graph, budget, delta=0.95):
                     IC_result = information_cascade(graph, seeds + [n])[0]
                     IC_cumulative.append(IC_result)
 
-                spread_node = round(np.mean(IC_cumulative) , 3)
+                spread_node = round(np.mean(IC_cumulative), 3)
                 marginal_gain[n] = spread_node
             else:  # metti spread a zero per i nodi che non possono permettermi
                 marginal_gain[n] = 0.0
@@ -72,14 +71,12 @@ def greedy_celf(graph, budget, delta=0.95):
     # remaining_budget = round(remaining_budget, 3)
     # seeds.pop()
 
-    a = [remaining_budget, seeds]
-    return a
+    return remaining_budget, seeds
 
 
 if __name__ == "__main__":
 
     features = [0.1, 0.08, 0.05, 0.02]
-
     graph = generate_graph(100, 5, 0.1, 1234)
     graph = weight_edges(graph, features)
     graph = weight_nodes(graph)
@@ -92,10 +89,8 @@ if __name__ == "__main__":
     all_node_weight = sum(set([graph.nodes[g]['cost'] for g in graph.nodes]))
     print('Weight of all nodes in the graph: {}'.format(round(all_node_weight, 3)))
 
-    
-    
     for d in delta:
-        
+
         start_time = time.time()
         greedy = []
         greedy = greedy_celf(graph, budget, delta=d)
@@ -103,7 +98,7 @@ if __name__ == "__main__":
         seeds = sorted(greedy[1])
         spread_cumulative = []
         print('Simulation with delta : {}'.format(d))
-        
+
         for n in range(N_simulations):
             IC = information_cascade(graph, seeds)[0]
             spread_cumulative.append(IC)
@@ -113,10 +108,7 @@ if __name__ == "__main__":
         print('Seeds: {}'.format(sorted(seeds)))
         print('Remaining budget: {}'.format(round(remaining_budget, 3)))
         print('Spread: {}'.format(round(float(spread), 3)))
-        print('Time for simulation: {} \n'.format(time.time()-start_time))
+        print('Time for simulation: {} \n'.format(time.time() - start_time))
 
     plt.plot(delta, spreads)
     plt.show()
-
-
-    
