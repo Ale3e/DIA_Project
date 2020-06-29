@@ -10,6 +10,8 @@ class Environment:
         rewards = dict.fromkeys(pulled_arm, 0)
         for (u, v) in rewards:
             rewards[(u, v)] = np.random.binomial(1, self.graph[u][v]['prob'])
+
+        #todo: add propagation to nodes where rewards[(u, v)]==1
         #print(rewards)
         #active_edges = [i for i in success if success[i] == 1]
         return rewards

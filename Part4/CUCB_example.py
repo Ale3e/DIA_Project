@@ -10,14 +10,15 @@ import tqdm
 from CUCB_learner import *
 
 if __name__ == "__main__":
-    features = [0.1, 0.08, 0.05, 0.02]
+    #features = [0.1, 0.08, 0.05, 0.02]
+    n_features = 4
 
     graph = generate_graph(100, 5, 0.1, 1234)
-    graph = weight_edges(graph, features)
+    graph = weight_edges(graph, n_features)
     graph = weight_nodes(graph)
 
     budget = 7.5
-    delta = 0.95
+    delta = 0.5
     N_simulations = 100
 
     # optimal with greedy_celf#
@@ -46,11 +47,11 @@ if __name__ == "__main__":
     env = Environment(graph)
     ucb_learner = UCBLearner(graph, budget)
 
-    for t in tqdm.tqdm(range(1000)):
+    for t in tqdm.tqdm(range(20)):
         start_time = time.time()
         super_arm = ucb_learner.pull_superarm()
         reward = env.round(super_arm)
-        ucb_learner.update(super_arm, reward)
+        ucb_learner.update(reward)
 
         estimated_seeds = greedy_celf(ucb_learner.graph, budget)[1]
 

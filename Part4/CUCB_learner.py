@@ -39,7 +39,7 @@ class UCBLearner:
         #print('superarm: {}'.format(superarm))
         return superarm
 
-    def update(self, pulled_arm, reward):
+    def update(self, reward):
         self.t += 1
 
         # print('reward: {}'.format(reward))

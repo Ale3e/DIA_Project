@@ -76,9 +76,11 @@ def greedy_celf(graph, budget, delta=0.95):
 
 if __name__ == "__main__":
 
-    features = [0.1, 0.08, 0.05, 0.02]
-    graph = generate_graph(100, 5, 0.1, 1234)
-    graph = weight_edges(graph, features)
+    # features = [0.1, 0.08, 0.05, 0.02]
+    n_features = 4
+
+    graph = generate_graph(1000, 5, 0.1, 1234)
+    graph = weight_edges(graph, n_features)
     graph = weight_nodes(graph)
 
     budget = 5

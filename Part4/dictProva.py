@@ -35,20 +35,21 @@ if __name__ == "__main__":
     #     print(marginal_gain)
     #     i += 1
 
-    features = [0.1, 0.08, 0.05, 0.02]
+    features = np.array([0.1, 0.08, 0.05, 0.02])
     graph = generate_graph(100, 5, 0.1, 1234)
     graph = weight_edges(graph, features)
     graph = weight_nodes(graph)
     budget = 5
 
-    alpha = dict.fromkeys(graph.edges, 1)
-    beta = dict.fromkeys(graph.edges, 1)
+    true_theta = np.random.dirichlet(np.ones(len(features)), size=1)
 
-    for node1, node2 in graph.edges():
-        prob_ts = round(np.random.beta(alpha[(node1,node2)], beta[(node1,node2)]), 3)
-        print(prob_ts)
-        graph[node1][node2]['prob'] = prob_ts
-
+    # alpha = dict.fromkeys(graph.edges, 1)
+    # beta = dict.fromkeys(graph.edges, 1)
+    #
+    # for node1, node2 in graph.edges():
+    #     prob_ts = round(np.random.beta(alpha[(node1,node2)], beta[(node1,node2)]), 3)
+    #     print(prob_ts)
+    #     graph[node1][node2]['prob'] = prob_ts
 
     # superarm = set()
     # seeds = []
@@ -65,9 +66,6 @@ if __name__ == "__main__":
     # for u,v in superarm:
     #     if graph[u][v] == None:
     #         raise Exception('({},{}) is not a valid edge of the graph')
-
-
-
 
     #round
     # success = dict.fromkeys(superarm, 0)
