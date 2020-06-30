@@ -40,7 +40,7 @@ if __name__ == "__main__":
     print('Seeds: {}'.format(sorted(opt_seeds)))
     print('Optimal spread: {} \n'.format(round(float(opt_spread), 3)))
 
-    # UCB_Learner
+    # TS_Learner
 
     spreads = []
     cumulative_spreads = []
@@ -48,18 +48,18 @@ if __name__ == "__main__":
     env = Environment(graph)
     ts_learner = TSLearner(graph, budget)
 
-    N_simulations = 100
-    T = 100
+    N_mc_simulations = 100
+    T = 1000
 
     for t in tqdm.tqdm(range(T)):
         start_time = time.time()
         super_arm = ts_learner.pull_superarm()
         reward = env.round(super_arm)
-        ts_learner.update(super_arm, reward)
+        ts_learner.update(reward)
 
         estimated_seeds = greedy_celf(ts_learner.graph, budget)[1]
 
-        for n in range(N_simulations):
+        for n in range(N_mc_simulations):
             IC = information_cascade(graph, estimated_seeds)[0]
             cumulative_spreads.append(IC)
         means_spread = np.mean(cumulative_spreads)

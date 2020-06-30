@@ -38,7 +38,7 @@ class TSLearner:
         #print('superarm: {}'.format(superarm))
         return superarm
 
-    def update(self, pulled_arm, reward):
+    def update(self, reward):
 
         self.t += 1
         for (u, v) in reward.keys():

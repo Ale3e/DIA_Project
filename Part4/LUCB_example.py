@@ -18,10 +18,11 @@ if __name__ == "__main__":
     graph = weight_nodes(graph)
 
     budget = 7.5
-    delta = 0.95
-    N_simulations = 100
+    delta = 0.5
+
 
     # optimal with greedy_celf#
+    greedy_N_simulations = 1000
 
     start_time = time.time()
     greedy = []
@@ -29,7 +30,7 @@ if __name__ == "__main__":
     opt_seeds = sorted(greedy[1])
     spread_cumulative = []
 
-    for n in range(N_simulations):
+    for n in range(greedy_N_simulations):
         IC = information_cascade(graph, opt_seeds)[0]
         spread_cumulative.append(IC)
 
@@ -43,12 +44,16 @@ if __name__ == "__main__":
 
     spreads = []
     cumulative_spreads = []
-    coffiecient_c = 2
     true_probs = get_probabilities(graph)
     env = Environment(graph)
+
+    coffiecient_c = 2
     lucb_learner = LUCBLearner(graph, budget, n_features, coffiecient_c)
 
-    for t in tqdm.tqdm(range(3)):
+    N_mc_simulations = 100
+    T = 1000
+
+    for t in tqdm.tqdm(range(T)):
         start_time = time.time()
         super_arm = lucb_learner.pull_superarm()
         reward = env.round(super_arm)
@@ -56,7 +61,7 @@ if __name__ == "__main__":
 
         estimated_seeds = greedy_celf(lucb_learner.graph, budget)[1]
 
-        for n in range(N_simulations):
+        for n in range(N_mc_simulations):
             IC = information_cascade(graph, estimated_seeds)[0]
             cumulative_spreads.append(IC)
         means_spread = np.mean(cumulative_spreads)
@@ -67,11 +72,21 @@ if __name__ == "__main__":
 
     print('Opt-spread: {}'.format(opt_spread))
     print('Spreads: {}'.format(spreads))
-    regret = np.abs(opt_spread-spreads)
+    regret = np.abs(opt_spread - spreads)
 
-    #print(np.cumsum(np.abs((opt_spread - spreads))))
-    #plt.plot(np.cumsum(np.abs((opt_spread - spreads))))
-    plt.plot(np.cumsum(regret))
+    ### PLOT ###
+    plt.style.use('seaborn')  # pretty matplotlib plots
+    plt.rcParams['figure.figsize'] = (12, 8)
+    opt_spreads = []
+    for t in range(T): opt_spreads.append(opt_spread)
+
+    # print(np.cumsum(np.abs((opt_spread - spreads))))
+    # plt.plot(np.cumsum(np.abs((opt_spread - spreads))))
+    plt.plot(spreads, color='blue', label='TS')
+    plt.plot(opt_spreads, color='red', label='opt')
+    plt.xlabel('t')
+    plt.ylabel('Spread')
+    plt.title('LinUCB')
     plt.legend()
     plt.show()
 

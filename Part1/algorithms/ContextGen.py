@@ -1,6 +1,5 @@
 import numpy as np
 
-<<<<<<< HEAD
 #   users: array tipo
 #
 #   [[Worker, Student, Retired],
@@ -42,26 +41,6 @@ class ContextGen:
         self.prob = prob
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-=======
 # users: array tipo
 
 # [[Worker, Student, Retired],
@@ -97,4 +76,4 @@ class ContextGen:
 class ContextGen:
     def __init__(self, users):
         self.users = users
->>>>>>> master
+

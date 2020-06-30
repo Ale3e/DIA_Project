@@ -52,8 +52,6 @@ class UCBLearner:
         #     print('T is {}'.format(self.T[(u, v)]))
         #     print('reward is {}'.format(reward[(u, v)]))
 
-        #####-----####
-
         for (u, v) in reward.keys():
             self.T[(u, v)] = self.T[(u, v)] + 1
             self.cumulative_reward[(u, v)] += reward[(u, v)]
