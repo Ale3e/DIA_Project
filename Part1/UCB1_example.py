@@ -3,16 +3,16 @@ from algorithms.ucb1.UCB1Learner import *
 from algorithms.Environment import *
 
 # Environment variable
-price = list(range(325, 450, 25))
+price = list(range(150, 600, 100))
 print(price)
 n_arms = len(price)
 print(n_arms)
-p = np.array([0.0263, 0.0193, 0.0129, 0.0061, 0.0012])
+p = np.array([0.938, 0.627, 0.423, 0.287, 0.091])
 print(p)
 assumed_optimal_price = price[1]
 opt = np.array([assumed_optimal_price])
-T = 365
-n_experiments = 1000
+T = 365*50
+n_experiments = 5000
 
 # UCB1 Variable
 counts = np.zeros(n_arms)
