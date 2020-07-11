@@ -27,9 +27,18 @@ def greedy_celf(graph, budget, delta=0.95):
     # evaluate each node in the graph for marginal increase in greedy algorithm
     marginal_gain = dict.fromkeys(graph.nodes, 0)
     nodes_left_to_evaluate = set(marginal_gain.keys())
-    all_node_weight = sum(set([graph.nodes[g]['cost'] for g in graph.nodes]))
 
-    if budget >= all_node_weight:
+    # all_node_weight = sum(set([graph.nodes[g]['cost'] for g in graph.nodes]))
+
+    tot_weight = 0.0
+    for node_idx in range(graph.number_of_nodes()):
+        weight = []
+        # print("\nNode : {} with cost {}".format(graph.nodes[node_idx], graph.nodes[node_idx]['cost']))
+        tot_weight += graph.nodes[node_idx]['cost']
+
+    # print('Total graph cost= {}'.format(tot_weight))
+
+    if budget >= tot_weight:
         print('Error: budget too high, you can buy all nodes')
         return 0
 

@@ -16,7 +16,7 @@ if __name__ == "__main__":
     graph = weight_edges(graph, n_features)
     graph = weight_nodes(graph)
 
-    budget = 7.5
+    budget = 10
     delta = 0.5
 
 
@@ -49,7 +49,7 @@ if __name__ == "__main__":
     ts_learner = TSLearner(graph, budget)
 
     N_mc_simulations = 100
-    T = 1000
+    T = 200
 
     for t in tqdm.tqdm(range(T)):
         start_time = time.time()

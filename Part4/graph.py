@@ -78,9 +78,19 @@ if __name__ == "__main__":
     G = weight_edges(G, n_features)
     G = weight_nodes(G)
 
+
     print(nx.info(G))
 
-    print(G.adj[0])
+    # print(G.adj[0])
+
+    # Print total weight of nodes in the graph
+    tot_weight = 0.0
+    for node_idx in range(G.number_of_nodes()):
+        weight = []
+        print("\nNode : {} with cost {}".format(G.nodes[node_idx],G.nodes[node_idx]['cost']))
+        tot_weight += G.nodes[node_idx]['cost']
+
+    print('Total graph cost= {}'.format(tot_weight))
 
 
     # print node attributes and of adj nodes with the influence prob
@@ -98,31 +108,31 @@ if __name__ == "__main__":
 
     #print edges and their probability
 
-    for edge in G.edges():
-        print("Edge {} with prob {}".format(edge, G[edge[0]][edge[1]]['prob']))
-        print("has the following features: ")
-        print(G[edge[0]][edge[1]]['features'])
+    # for edge in G.edges():
+    #     print("Edge {} with prob {}".format(edge, G[edge[0]][edge[1]]['prob']))
+    #     print("has the following features: ")
+    #     print(G[edge[0]][edge[1]]['features'])
+    #
+    # M = np.identity(n_features)
+    # b = np.zeros(n_features)
+    # b = b.reshape(4, 1)
+    #
+    # print("M: \n {}".format(M))
+    # print("b: \n {}".format(b))
+    #
+    # inv_M = np.linalg.inv(M)
+    # theta = np.dot(inv_M, b)
+    #
+    # print("Inv.M: \n {}".format(inv_M))
+    # print("theta: \n {}".format(theta))
+    #
+    # for node1, node2 in G.edges():
+    #     G[node1][node2]['prob'] = np.dot(theta.T, G[node1][node2]['features']).item()
+    #     print("Edge ({},{}) with prob {}".format(node1, node2, G[node1][node2]['prob']))
 
-    M = np.identity(n_features)
-    b = np.zeros(n_features)
-    b = b.reshape(4, 1)
-
-    print("M: \n {}".format(M))
-    print("b: \n {}".format(b))
-
-    inv_M = np.linalg.inv(M)
-    theta = np.dot(inv_M, b)
-
-    print("Inv.M: \n {}".format(inv_M))
-    print("theta: \n {}".format(theta))
-
-    for node1, node2 in G.edges():
-        G[node1][node2]['prob'] = np.dot(theta.T, G[node1][node2]['features']).item()
-        print("Edge ({},{}) with prob {}".format(node1, node2, G[node1][node2]['prob']))
 
 
-
-    # spring layout graph plot
+    # # spring layout graph plot
     # pos = nx.spring_layout(G)
     # plt.figure(figsize=(12, 12))
     # nx.draw_networkx(G, pos)
