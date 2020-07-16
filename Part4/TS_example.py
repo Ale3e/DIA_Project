@@ -49,7 +49,7 @@ if __name__ == "__main__":
     ts_learner = TSLearner(graph, budget)
 
     N_mc_simulations = 100
-    T = 200
+    T = 500
 
     for t in tqdm.tqdm(range(T)):
         start_time = time.time()

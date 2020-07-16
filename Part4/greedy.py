@@ -92,7 +92,7 @@ if __name__ == "__main__":
     graph = weight_edges(graph, n_features)
     graph = weight_nodes(graph)
 
-    budget = 5
+    budget = 75
     delta = [0.95, 0.8, 0.4, 0.2]
     N_simulations = 1000
     spreads = []

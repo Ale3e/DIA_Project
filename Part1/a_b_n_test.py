@@ -1,46 +1,105 @@
 import numpy as np
+import scipy.stats as st
 import matplotlib.pyplot as plt
-from algorithms.a_b_n.data import *
 
-p = np.array([0.0263, 0.0193, 0.0129, 0.0061, 0.0012])
-price = list(range(325, 450, 25))
-N_A = 10000
-N_B = 10000
-ab_data = []
-best = np.random.randint(1, 5)
-ab_summary = []
-for n in range(len(p)):
-    print(best, n)
-    if best == n:
-        continue
-    ab_data.append(generate_data(N_A, N_B, p[best], p[n], days=365))
-    ab_summary.append(ab_data[n].pivot_table(values='converted', index='group', aggfunc=np.sum))
-    ab_summary[n]['total'] = ab_data[n].pivot_table(values='converted', index='group', aggfunc=lambda x: len(x))
-    ab_summary[n]['rate'] = ab_data[n].pivot_table(values='converted', index='group')
-    if ab_summary[n]['converted'][0] * price[best] < ab_summary[n]['converted'][1] * price[n]:
-        best = n
-print("Best ", best)
-total = []
-converted = []
-cr = []
-fig, ax = plt.subplots(figsize=(12, 6))
-x = []
-y = []
-tot = []
-for n in range(len(p)):
-    total.append(ab_summary[n]['total'][1])
-    converted.append(ab_summary[n]['converted'][1])
-    cr.append(ab_summary[n]['rate'][1])
-    x.append(np.linspace(converted[n] - 49, converted[n] + 50, 100))
-    y.append(scs.binom(total[n], cr[n]).pmf(x[n]))
-    tot.append(converted[n]*price[n])
-    if n == best:
-        ax.bar(x[n], y[n], alpha=0.5)
-    ax.plot(x[n], y[n], alpha=0.5)
-array_legend = ['Price 325 - Total = ' + str(tot[0]), 'Price 350 - Total = ' + str(tot[1]),
-                'Price 375 - Total = ' + str(tot[2]), 'Price 400 - Total = ' + str(tot[3]),
-                'Price 425 - Total = ' + str(tot[4])]
-ax.legend(array_legend)
-plt.xlabel('converted')
-plt.ylabel('probability')
+class SequentialABTest():
+    def __init__(self, p1,p2,alpha=0.05,beta=0.8):
+        self.p1 = p1
+        self.p2 = p2
+        self.alpha = alpha
+        self.beta = beta
+
+    def collect_samples_2(self,n_samples):
+        x1 = [np.random.binomial(1,self.p1) for _ in range(0,int(n_samples/2))]
+        x2 = [np.random.binomial(1,self.p2) for _ in range(0,int(n_samples/2))]
+        return x1,x2
+
+    def test(self,x1,x2,price1,price2):
+        mu1 = np.mean(x1) * price1
+        mu2 = np.mean(x2) * price2
+        n1 = np.array(x1).shape[1]
+        n2 = np.array(x2).shape[1]
+
+        y = ((n1*mu1) + (n2*mu2)) / (n1+n2)
+        var1 = self.p1 * (1-self.p1)
+        var2 = self.p1 * (1-self.p1)
+
+        #z = (mu1 - mu2) / np.sqrt(y * (1 - y) * ((1/n1)+(1/n2)))
+        z = (mu1 - mu2) / np.sqrt(((var1/n1)+(var2/n2)))
+        print('Z: {}'.format(z))
+
+        p_val = 1 - st.norm.cdf(z)
+        return p_val
+
+    def best_candidate(self,x1,x2,price1,price2):
+        p_val = self.test(x1,x2,price1,price2)
+        print('p_val = {}'.format(p_val))
+        print('alpha = {}'.format(self.alpha))
+
+        if(p_val < self.alpha):
+            print('Accetto ipotesi alternativa')
+            return 1
+        else:
+            print('Accetto ipotesi nulla')
+            return 0
+
+
+    def calculate_sample_size2(self):
+        z_alpha = st.norm.ppf(1-self.alpha)
+        z_beta = abs(st.norm.ppf(self.beta))
+        var = self.p1 * (1 - self.p1) + self.p2 * (1 - self.p2)
+        min_var = abs(self.p1 - self.p2)
+        n_samples = (((z_alpha + z_beta)**2) * var) / (min_var**2)
+        return int(n_samples)
+
+np.random.seed(14)
+p = [0.0263, 0.0193, 0.0129, 0.0061, 0.0012]
+opt = p[0]
+prices = {0.0263: 325, 0.0193: 350, 0.0129: 375, 0.0061: 400, 0.0012: 425}
+p.reverse()
+reward = []
+control = p.pop()
+n_experiments = 1000
+best_price = p[0]
+
+plt.figure(0)
+
+while p:
+    rew_control = []
+    rew_test = []
+    test = p.pop()
+    print('Testing {} vs {}'.format(control,test))
+    ab_tester = SequentialABTest(p1=control, p2=test,alpha=0.05)
+    n_samples = ab_tester.calculate_sample_size2()
+    print('N samples: {}'.format(n_samples))
+
+    x1, x2 = ab_tester.collect_samples_2(n_samples)
+    rew_control.append(x1)
+    rew_test.append(x2)
+
+    winner = ab_tester.best_candidate(rew_control, rew_test,prices[control],prices[test])
+    mean_control = np.mean(rew_control)
+    mean_test = np.mean(rew_test)
+    reward += n_samples * [(mean_control * prices[control] + mean_test * prices[test]) / 2]
+    print('control',mean_control* prices[control])
+    print('test',mean_test * prices[test])
+    plt.plot(reward, 'r')
+    if(winner == 1):
+        print('Best price: {}'.format(control))
+        best_price = control
+    else:
+        print('Best price: {}'.format(test))
+        control = test
+        best_price = test
+
+    #reward += n_samples * [(control*prices[control] + test*prices[test])/2]
+
+
+a = [np.random.binomial(1,best_price) for _ in range(0,300)]
+reward += len(a) * [np.mean(a)* prices[best_price]]
+print(best_price * prices[best_price])
+clairvoyant = 12000* [best_price * prices[best_price]]
+plt.plot(reward, 'r',label='AVG Reward')
+plt.plot(clairvoyant, 'b--',label='Clairvoyant')
+plt.legend()
 plt.show()
