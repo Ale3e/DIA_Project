@@ -2,7 +2,6 @@ from graph import generate_graph, weight_nodes, weight_edges
 from information_cascade import information_cascade
 import matplotlib.pyplot as plt
 import numpy as np
-import tqdm
 import time
 
 '''
@@ -93,18 +92,13 @@ if __name__ == "__main__":
     graph = weight_edges(graph, n_features)
     graph = weight_nodes(graph)
 
-    budget = 100
-    # delta = [0.95, 0.8, 0.4, 0.2]
-    delta = [0.98]
-    N_simulations = 10
+    budget = 5
+    delta = [0.95, 0.8, 0.4, 0.2]
+    N_simulations = 1000
     spreads = []
 
-    tot_weight = 0.0
-    for node_idx in range(graph.number_of_nodes()):
-        weight = []
-        # print("\nNode : {} with cost {}".format(graph.nodes[node_idx], graph.nodes[node_idx]['cost']))
-        tot_weight += graph.nodes[node_idx]['cost']
-    print('Weight of all nodes in the graph: {}'.format(round(tot_weight, 3)))
+    all_node_weight = sum(set([graph.nodes[g]['cost'] for g in graph.nodes]))
+    print('Weight of all nodes in the graph: {}'.format(round(all_node_weight, 3)))
 
     for d in delta:
 
@@ -128,6 +122,4 @@ if __name__ == "__main__":
         print('Time for simulation: {} \n'.format(time.time() - start_time))
 
     plt.plot(delta, spreads)
-    plt.xlabel('delta')
-    plt.ylabel('spread')
     plt.show()
