@@ -16,7 +16,7 @@ if __name__ == "__main__":
     graph = weight_edges(graph, n_features)
     graph = weight_nodes(graph)
 
-    budget = 10
+    budget = 7.5
     delta = 0.5
 
 
@@ -49,7 +49,7 @@ if __name__ == "__main__":
     ts_learner = TSLearner(graph, budget)
 
     N_mc_simulations = 100
-    T = 200
+    T = 500
 
     for t in tqdm.tqdm(range(T)):
         start_time = time.time()
@@ -80,12 +80,18 @@ if __name__ == "__main__":
 
 
 
-    # print(np.cumsum(np.abs((opt_spread - spreads))))
-    # plt.plot(np.cumsum(np.abs((opt_spread - spreads))))
     plt.plot(spreads, color='blue', label='TS')
     plt.plot(opt_spreads, color='red', label='opt')
     plt.xlabel('t')
     plt.ylabel('Spread')
+    plt.title('TS_CMAB')
+    plt.legend()
+    plt.show()
+
+    # plt.plot(np.cumsum(np.abs((opt_spread - spreads))))
+    plt.plot(np.cumsum(regret), color='blue', label='TS')
+    plt.xlabel('t')
+    plt.ylabel('Regret')
     plt.title('TS_CMAB')
     plt.legend()
     plt.show()

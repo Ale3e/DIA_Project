@@ -51,7 +51,7 @@ if __name__ == "__main__":
     lucb_learner = LUCBLearner(graph, budget, n_features, coffiecient_c)
 
     N_mc_simulations = 100
-    T = 1000
+    T = 500
 
     for t in tqdm.tqdm(range(T)):
         start_time = time.time()
@@ -87,6 +87,13 @@ if __name__ == "__main__":
     plt.xlabel('t')
     plt.ylabel('Spread')
     plt.title('LinUCB')
+    plt.legend()
+    plt.show()
+
+    plt.plot(np.cumsum(regret), color='blue', label='LUCB')
+    plt.xlabel('t')
+    plt.ylabel('Regret')
+    plt.title('LUCB1')
     plt.legend()
     plt.show()
 

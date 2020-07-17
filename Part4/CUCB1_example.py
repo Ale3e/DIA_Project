@@ -49,7 +49,7 @@ if __name__ == "__main__":
     ucb_learner = UCBLearner(graph, budget)
 
     N_mc_simulations = 100
-    T = 1000
+    T = 500
 
     for t in tqdm.tqdm(range(T)):
         start_time = time.time()
@@ -85,6 +85,13 @@ if __name__ == "__main__":
     plt.xlabel('t')
     plt.ylabel('Spread')
     plt.title('CUCB')
+    plt.legend()
+    plt.show()
+
+    plt.plot(np.cumsum(regret), color='blue', label='CUCB1')
+    plt.xlabel('t')
+    plt.ylabel('Regret')
+    plt.title('CUCB1')
     plt.legend()
     plt.show()
 
