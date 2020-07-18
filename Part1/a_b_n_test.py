@@ -61,6 +61,7 @@ reward = []
 control = p.pop()
 n_experiments = 1000
 best_price = p[0]
+tot_samples=0
 
 plt.figure(0)
 
@@ -71,6 +72,7 @@ while p:
     print('Testing {} vs {}'.format(control,test))
     ab_tester = SequentialABTest(p1=control, p2=test,alpha=0.05)
     n_samples = ab_tester.calculate_sample_size2()
+    tot_samples+=n_samples
     print('N samples: {}'.format(n_samples))
 
     x1, x2 = ab_tester.collect_samples_2(n_samples)
@@ -97,8 +99,8 @@ while p:
 
 a = [np.random.binomial(1,best_price) for _ in range(0,300)]
 reward += len(a) * [np.mean(a)* prices[best_price]]
-print(best_price * prices[best_price])
-clairvoyant = 12000* [best_price * prices[best_price]]
+tot_samples+=len(a)
+clairvoyant = tot_samples* [best_price * prices[best_price]]
 plt.plot(reward, 'r',label='AVG Reward')
 plt.plot(clairvoyant, 'b--',label='Clairvoyant')
 plt.legend()

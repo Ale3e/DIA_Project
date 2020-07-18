@@ -1,0 +1,207 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from Environment import *
+from TS_Learner import *
+from Greedy_Learner import *
+from UCB1_Learner import *
+import pandas as pd
+import math
+np.random.seed(10)
+n_arms = 5
+from SWTS_Learner import *
+from SWUCB1_Learner import *
+
+
+p = np.array([[[0.324,  0.247, 0.144,  0.071, 0.018],[0.261, 0.168,  0.117, 0.051, 0.008],[0.281, 0.178, 0.134, 0.058, 0.012]],
+              [[0.294, 0.164, 0.135, 0.061, 0.012], [0.206, 0.136, 0.105, 0.048, 0.004],[0.211, 0.141, 0.094, 0.046, 0.007]],
+              [[0.198, 0.115,  0.103, 0.059, 0.005],[0.165,  0.087, 0.073, 0.042, 0.002],[0.172, 0.092, 0.079,  0.052, 0.003]]])
+
+prices = np.array([325, 350, 375,400,425])
+prices2 = np.array([[325, 350, 375,400,425],[325, 350, 375,400,425],[325, 350, 375,400,425]])
+
+
+print(np.mean(p,axis=0)*prices2)
+
+opt = np.max(np.mean(p,axis=0)*prices2)
+
+T = 365
+
+n_experiments = 200
+ts_rewards_per_experiment = []
+gr_rewards_per_experiment = []
+z = pd.DataFrame(columns=['Gender','Age','Arm','Reward'])
+
+arms = np.array([0,1,2,3,4])
+
+def split_on_age(z,delta=0.1):
+
+    G = compute_profit(z,delta)
+
+    #under has age == 0
+    z_l = z.loc[z['Age'] == 0]
+    z_r = z.loc[z['Age'] == 1]
+    G_l = compute_profit(z_l,delta= delta/4)
+    G_r = compute_profit(z_r,delta= delta/4)
+
+    return (G_r + G_l - G > 0)
+
+def split_on_gender(z,delta=0.05):
+    z_under = z.loc[z['Age'] == 0]
+
+    G = compute_profit(z_under,delta)
+
+    z_l = z_under.loc[z['Gender'] == 0]
+    z_r = z_under.loc[z['Gender'] == 1]
+    G_l = compute_profit(z_l, delta=delta / 4)
+    G_r = compute_profit(z_r, delta=delta / 4)
+    return (G_r + G_l - G > 0)
+
+def compute_profit(z,delta):
+    profit_per_arm = []
+    for arm in arms:
+        n = z.shape[0]
+        z1 = z.loc[z['Arm'] == arm]
+        if z1.shape[0] == 0:
+            profit_per_arm.append(-1e400)
+            continue
+        p = z.shape[0] / n
+        p_confidence_bound = math.sqrt(-(math.log(delta/2)/(2*n)))
+        p_lower_bound = p - p_confidence_bound
+
+        arm_reward = z1.sum(axis=0)['Reward']
+        rew_confidence_bound = math.sqrt(-(math.log(delta/2)/(2*n)))
+
+        rew_lower_bound = (arm_reward / z1.shape[0]) - rew_confidence_bound
+        G = p_lower_bound * rew_lower_bound
+        profit_per_arm.append(G)
+    #print(np.argmax(profit_per_arm))
+    return np.max(profit_per_arm)
+
+def get_learner(age,gender,learners,split_age=False,split_gender=False):
+    if (split_gender):
+        if(gender == 0):
+            return learners[3]
+        else: return learners[4]
+    if (split_age):
+        if(age == 0):
+            return learners[1]
+        else:return learners[2]
+    else:return learners[0]
+
+
+def generate_reward_phase(age,gender,probabilities,pulled_arm,phase):
+    probabilities = probabilities[:,phase,:]
+    if (age == 0 and gender == 0):
+        reward = np.random.binomial(1, probabilities[0][pulled_arm])
+        return reward
+    if(age == 0 and gender == 1):
+        reward = np.random.binomial(1, probabilities[1][pulled_arm])
+        return reward
+    else:
+        reward = np.random.binomial(1, probabilities[2][pulled_arm])
+        return reward
+
+
+n_phases = p.shape[1] - 1
+
+phases_len = int(T/n_phases)
+window_size = 26
+
+
+for e in range(0,200):
+    learners = []
+    z = pd.DataFrame(columns=['Gender', 'Age', 'Arm', 'Reward'])
+    print('Experiment {}'.format(e))
+    env = Environment(n_arms=n_arms, probabilities=p)
+    ts_learner = SWTS_Learner(n_arms=n_arms,window_size=window_size,prices=prices)
+    gr_learner = SWUCB1_Learner(n_arms=n_arms,window_size=window_size,prices=prices)
+    learners.append(ts_learner)
+    check_split_on_age = True
+    check_split_on_gender = False
+    split_age = False
+    split_gender = False
+    for i in range(0,T):
+        current_phase = int(i / phases_len)
+        gender = np.random.binomial(1, 0.5)
+        age = np.random.binomial(1, 0.5)
+        ts_learner = get_learner(age,gender,learners,split_age,split_gender)
+        if ((i % 7) == 0 and i != 0):
+            if (check_split_on_age):
+                split_age = split_on_age(z)
+                if (split_age):
+
+                    #print('split on age ')
+                    learner_under = ts_learner
+                    learner_over = ts_learner
+                    learners.append(learner_under)
+                    learners.append(learner_over)
+                    check_split_on_age = False
+                    check_split_on_gender = True
+                #else: print('dont split on age')
+
+
+            if(check_split_on_gender):
+                split_gender = split_on_gender(z)
+                if (split_gender):
+                    learner_under_men = ts_learner
+                    learner_under_women = ts_learner
+                    learners.append(learner_under_men)
+                    learners.append(learner_under_women)
+                    #print('split on gender ',i )
+                    check_split_on_gender = False
+                #else: print('dont split on gender')
+
+        #Thomposon Sampling Learner
+        pulled_arm = ts_learner.pull_arm()
+        #reward = env.round(pulled_arm)
+        reward = generate_reward_phase(age,gender,p,pulled_arm,current_phase)
+        ts_learner.update(pulled_arm,reward)
+
+        z = z.append({'Gender' : gender, 'Age': age,'Arm':pulled_arm,'Reward':reward},ignore_index=True)
+
+        #Greedy Learner
+        pulled_arm = gr_learner.pull_arm()
+        #reward = env.round(pulled_arm)
+        reward = generate_reward_phase(age,gender,p,pulled_arm,current_phase)
+        gr_learner.update(pulled_arm,reward)
+
+    ts_rewards_per_experiment.append(ts_learner.collected_rewards)
+    gr_rewards_per_experiment.append(gr_learner.collected_rewards)
+
+
+ts_instantaneus_regret = np.zeros(T)
+swts_instantaneus_regret = np.zeros(T)
+n_phases = p.shape[1]
+phases_len = int(T/n_phases)
+opt_per_phases = np.max(np.mean(p,axis=0)*prices2,axis=1)
+print('phase len {}'.format(phases_len))
+print('n phases {}'.format(n_phases))
+opt_per_round = np.zeros(T)
+
+for i in range(0, n_phases):
+    opt_per_round[i*phases_len : (i+1)*phases_len] = opt_per_phases[i]
+    ts_instantaneus_regret[i*phases_len : (i+1)*phases_len] = opt_per_phases[i] - np.mean(ts_rewards_per_experiment,axis=0)[i*phases_len : (i+1)*phases_len]
+    swts_instantaneus_regret[i*phases_len : (i+1)*phases_len] = opt_per_phases[i] - np.mean(gr_rewards_per_experiment,axis=0)[i*phases_len : (i+1)*phases_len]
+
+
+plt.figure(0)
+plt.xlabel('t')
+plt.ylabel('Reward')
+plt.plot(np.mean(ts_rewards_per_experiment, axis=0), 'r')
+plt.plot(np.mean(gr_rewards_per_experiment, axis=0), 'b')
+#plt.plot(T * [opt], '--k')
+plt.plot(opt_per_round, '--k')
+plt.legend(['Contextual-SWUCB1','SWUCB1','Optimum'])
+plt.show()
+
+
+
+plt.figure(0)
+plt.xlabel('T')
+plt.ylabel('Regret')
+print("opt",opt)
+print("ts_rew", np.cumsum(np.mean(ts_rewards_per_experiment,axis=0)))
+plt.plot(np.cumsum(np.mean(opt - ts_rewards_per_experiment,axis=0)),'r')
+plt.plot(np.cumsum(np.mean(opt - gr_rewards_per_experiment,axis=0)),'b')
+plt.legend(['Contextual-SWUCB1','SWUCB1'])
+plt.show()

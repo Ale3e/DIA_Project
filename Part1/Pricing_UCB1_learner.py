@@ -10,7 +10,7 @@ class UCB1Learner:
 
         self.n_arms = n_arms
         self.t = 0
-        self.rewards_per_arm = x = [[] for i in range(n_arms)]
+        self.rewards_per_arm = x = [0.0 for i in range(n_arms)]
         self.collected_rewards = np.array([])
         self.marginal_profit = marginal_profit
         self.empirical_means_no_bound = copy.deepcopy(marginal_profit)
@@ -29,8 +29,8 @@ class UCB1Learner:
     def update(self, pulled_arm, reward):
 
         self.t += 1
-        self.rewards_per_arm[pulled_arm].append(reward*self.marginal_profit[pulled_arm])
-        self.collected_rewards = np.append(self.collected_rewards, reward*self.marginal_profit[pulled_arm])
+        self.rewards_per_arm[pulled_arm]+=(reward*self.marginal_profit[pulled_arm])
+        self.collected_rewards +=(reward*self.marginal_profit[pulled_arm])
         if self.sliding_window == 0:
             self.n_of_samples[pulled_arm] += 1
         for i in range(self.n_arms):
@@ -47,8 +47,8 @@ if __name__ == '__main__':
     n_experiments = 100
     T = 365
 
-    p = np.array([0.363, 0.3, 0.229, 0.11])
-    marginal_profit = [2.5, 5.0, 7.5, 10]
+    p = np.array([0.0363, 0.03, 0.023, 0.012])
+    marginal_profit = [325, 350, 375, 400]
 
     ucb_learner = UCB1Learner(n_arms, marginal_profit)
     print(ucb_learner.marginal_profit)

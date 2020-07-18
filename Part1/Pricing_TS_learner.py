@@ -3,6 +3,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import copy
 
+from Part1.pricingEnvironment import PricingEnvironment
+
 
 class TSLearner:
 
@@ -10,7 +12,7 @@ class TSLearner:
 
         self.n_arms = n_arms
         self.t = 0
-        self.rewards_per_arm = x = [[] for i in range(n_arms)]
+        self.rewards_per_arm = x = [0.0 for i in range(n_arms)]
         self.collected_rewards = np.array([])
         self.beta_parameters = np.ones((n_arms, 2))
         self.marginal_profit = marginal_profit
@@ -30,8 +32,8 @@ class TSLearner:
     def update(self, pulled_arm, reward):
 
         self.t += 1
-        self.rewards_per_arm[pulled_arm].append(reward*self.marginal_profit[pulled_arm])
-        self.collected_rewards = np.append(self.collected_rewards, reward*self.marginal_profit[pulled_arm])
+        self.rewards_per_arm[pulled_arm]+=(reward*self.marginal_profit[pulled_arm])
+        self.collected_rewards += reward*self.marginal_profit[pulled_arm]
         self.beta_parameters[pulled_arm, 0] += reward
         self.beta_parameters[pulled_arm, 1] += (1.0 - reward)
 
@@ -43,9 +45,9 @@ if __name__ == '__main__':
     n_experiments = 100
     T = 365
 
-    p = np.array([0.363, 0.3, 0.229, 0.11])
-    marginal_profit = [25, 50, 75, 100]
-    prices = {0.363: 325, 0.3: 350, 0.229: 375, 0.11: 400}
+    p = np.array([0.0363, 0.03, 0.023, 0.012])
+    marginal_profit = [325, 350, 375, 400]
+    prices = {0.0363: 325, 0.03: 350, 0.023: 375, 0.012: 400}
     opt = p[1]
 
     ts_learner = TSLearner(n_arms, marginal_profit)
