@@ -1,13 +1,13 @@
 from TS_Learner import *
 
 class SWTS_Learner(TS_Learner):
-    def __init__(self,n_arms, window_size,prices):
-        super().__init__(n_arms,prices)
+    def __init__(self, n_arms, window_size, prices):
+        super().__init__(n_arms, prices)
         self.window_size = window_size
 
-    def update(self,pulled_arm, reward):
+    def update(self, pulled_arm, reward):
         self.t += 1
-        self.update_observations(pulled_arm,reward)
+        self.update_observations(pulled_arm, reward)
         cum_rew = np.sum(self.rewards_per_arm[pulled_arm][-self.window_size:])
         n_rounds_arm = len(self.rewards_per_arm[pulled_arm][-self.window_size:])
 
