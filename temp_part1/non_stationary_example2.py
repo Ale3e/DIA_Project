@@ -18,13 +18,20 @@ p = np.array([[0.312, 0.224, 0.140, 0.068, 0.016],[0.312, 0.224, 0.140, 0.068, 0
 
 
 T = 364
-n_experiments = 1000
+n_experiments = 2500
 swts_reward_per_experiment = []
 ts_reward_per_experiment = []
 swucb_reward_per_experiment = []
 ucb_reward_per_experiment = []
-window_size = int(np.sqrt(T))
+window_size = int(np.sqrt(n_experiments)*n_arms)
 prices = np.array([325, 350, 375,400,425])
+n_phases = len(p)
+phases_len = int(T/n_phases)
+
+def generate_reward_phase(probabilities,pulled_arm,phase):
+    probabilities = probabilities[phase,:]
+    reward = np.random.binomial(1, probabilities[pulled_arm])
+    return reward
 
 
 for e in range(0,n_experiments):
@@ -37,12 +44,13 @@ for e in range(0,n_experiments):
 
 
     for t in range(0,T):
+        current_phase = int(t / phases_len)
         pulled_arm = ts_learner.pull_arm()
         reward = ts_env.round(pulled_arm)
         ts_learner.update(pulled_arm, reward)
 
         pulled_arm = swts_learner.pull_arm()
-        reward = swts_env.round(pulled_arm)
+        reward = generate_reward_phase(p, pulled_arm, current_phase)
         swts_learner.update(pulled_arm, reward)
 
     ts_reward_per_experiment.append(ts_learner.collected_rewards)
@@ -80,7 +88,7 @@ plt.plot(np.mean(swts_reward_per_experiment, axis=0), 'b')
 #plt.plot(np.mean(ucb_reward_per_experiment, axis=0), 'g')
 #plt.plot(np.mean(swucb_reward_per_experiment, axis=0), 'y')
 plt.plot(opt_per_round, '--k')
-plt.legend(['TS','SW-TS','Optimum'])
+plt.legend(['SW-TS','TS','Optimum'])
 plt.show()
 
 
@@ -92,5 +100,5 @@ plt.plot(np.cumsum(ts_instantaneus_regret), 'r')
 plt.plot(np.cumsum(swts_instantaneus_regret), 'b')
 #plt.plot(np.cumsum(ucb_instantaneus_regret), 'g')
 #plt.plot(np.cumsum(swucb_instantaneus_regret), 'y')
-plt.legend(['TS','SW-TS'])
+plt.legend(['SW-TS','TS'])
 plt.show()

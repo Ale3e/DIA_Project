@@ -105,7 +105,7 @@ def generate_reward_phase(age,gender,probabilities,pulled_arm,phase):
 n_phases = p.shape[1]
 
 phases_len = int(T/(n_phases))
-window_size = 19
+window_size = int(np.sqrt(n_experiments)*n_arms)
 
 
 for e in range(0,n_experiments):

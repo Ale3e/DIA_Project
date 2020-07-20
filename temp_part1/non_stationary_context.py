@@ -28,31 +28,30 @@ T = 365
 n_experiments = 1000
 ts_rewards_per_experiment = []
 gr_rewards_per_experiment = []
-z = pd.DataFrame(columns=['Gender','Age','Arm','Reward'])
+z = pd.DataFrame(columns=['U30','Retired','Arm','Reward'])
 
 arms = np.array([0,1,2,3,4])
 
-def split_on_age(z,delta=0.1):
+def split_on_retired(z,delta=0.1):
 
     G = compute_profit(z,delta)
 
-    #under has age == 0
-    z_l = z.loc[z['Age'] == 0]
-    z_r = z.loc[z['Age'] == 1]
+    z_l = z.loc[z['Retired'] == 0]
+    z_r = z.loc[z['Retired'] == 1]
     G_l = compute_profit(z_l,delta= delta/4)
     G_r = compute_profit(z_r,delta= delta/4)
 
     return (G_r + G_l - G > 0)
 
-def split_on_gender(z,delta=0.05):
-    z_under = z.loc[z['Age'] == 0]
+def split_on_u30(z,delta=0.05):
+    z_no = z.loc[z['Retired'] == 0]
 
-    G = compute_profit(z_under,delta)
+    G = compute_profit(z_no,delta)
 
-    z_l = z_under.loc[z['Gender'] == 0]
-    z_r = z_under.loc[z['Gender'] == 1]
-    G_l = compute_profit(z_l, delta=delta / 4)
-    G_r = compute_profit(z_r, delta=delta / 4)
+    z_u = z_no.loc[z['U30'] == 0]
+    z_o = z_no.loc[z['U30'] == 1]
+    G_l = compute_profit(z_u, delta=delta / 4)
+    G_r = compute_profit(z_o, delta=delta / 4)
     return (G_r + G_l - G > 0)
 
 def compute_profit(z,delta):
@@ -73,27 +72,26 @@ def compute_profit(z,delta):
         rew_lower_bound = (arm_reward / z1.shape[0]) - rew_confidence_bound
         G = p_lower_bound * rew_lower_bound
         profit_per_arm.append(G)
-    #print(np.argmax(profit_per_arm))
     return np.max(profit_per_arm)
 
-def get_learner(age,gender,learners,split_age=False,split_gender=False):
-    if (split_gender):
-        if(gender == 0):
+def get_learner(retired,u30,learners,split_retired=False,split_u30=False):
+    if (split_u30):
+        if(u30 == 0):
             return learners[3]
-        else:return learners[4]
-    if (split_age):
-        if(age == 0):
+        else: return learners[4]
+    if (split_retired):
+        if(retired == 0):
             return learners[1]
         else:return learners[2]
     else:return learners[0]
 
 
-def generate_reward_phase(age,gender,probabilities,pulled_arm,phase):
+def generate_reward_phase(retired,u30,probabilities,pulled_arm,phase):
     probabilities = probabilities[:,phase,:]
-    if (age == 0 and gender == 0):
+    if (retired == 0 and u30 == 1):
         reward = np.random.binomial(1, probabilities[0][pulled_arm])
         return reward
-    if(age == 0 and gender == 1):
+    if (retired == 0 and u30 == 0):
         reward = np.random.binomial(1, probabilities[1][pulled_arm])
         return reward
     else:
@@ -104,64 +102,58 @@ def generate_reward_phase(age,gender,probabilities,pulled_arm,phase):
 n_phases = p.shape[1]
 
 phases_len = int(T/n_phases)
-window_size = 19
+window_size = int(np.sqrt(n_experiments)*n_arms)
 
 
 for e in range(0,n_experiments):
     learners = []
-    z = pd.DataFrame(columns=['Gender', 'Age', 'Arm', 'Reward'])
+    z = pd.DataFrame(columns=['U30', 'Retired', 'Arm', 'Reward'])
     print('Experiment {}'.format(e))
     env = Non_Stationary_Environment(n_arms=n_arms, probabilities=p,horizon=T)
     ts_learner = SWUCB1_Learner(n_arms=n_arms,window_size=window_size,prices=prices)
     gr_learner = SWUCB1_Learner(n_arms=n_arms,window_size=window_size,prices=prices)
     learners.append(ts_learner)
-    check_split_on_age = True
-    check_split_on_gender = False
-    split_age = False
-    split_gender = False
+    check_split_on_retired = True
+    check_split_on_u30 = False
+    split_retired = False
+    split_u30 = False
     for i in range(0,364):
         current_phase = int(i / phases_len)
-        gender = np.random.binomial(1, 0.5)
-        age = np.random.binomial(1, 0.5)
-        ts_learner = get_learner(age,gender,learners,split_age,split_gender)
+        u30 = np.random.binomial(1, 0.5)
+        retired = np.random.binomial(1, 0.5)
+        ts_learner = get_learner(retired,u30,learners,split_retired,split_u30)
         if ((i % 7) == 0 and i != 0):
-            if (check_split_on_age):
-                split_age = split_on_age(z)
-                if (split_age):
+            if (check_split_on_retired):
+                split_retired = split_on_retired(z)
+                if (split_retired):
+                    learner_yes = ts_learner
+                    learner_no = ts_learner
+                    learners.append(learner_yes)
+                    learners.append(learner_no)
+                    check_split_on_retired = False
+                    check_split_on_u30 = True
 
-                    #print('split on age ')
-                    learner_under = ts_learner
-                    learner_over = ts_learner
-                    learners.append(learner_under)
-                    learners.append(learner_over)
-                    check_split_on_age = False
-                    check_split_on_gender = True
-                #else: print('dont split on age')
-
-
-            if(check_split_on_gender):
-                split_gender = split_on_gender(z)
-                if (split_gender):
-                    learner_under_men = ts_learner
-                    learner_under_women = ts_learner
-                    learners.append(learner_under_men)
-                    learners.append(learner_under_women)
-                    #print('split on gender ',i )
-                    check_split_on_gender = False
-                #else: print('dont split on gender')
+            if (check_split_on_u30):
+                split_u30 = split_on_u30(z)
+                if (split_u30):
+                    learner_under_30 = ts_learner
+                    learner_over_30 = ts_learner
+                    learners.append(learner_under_30)
+                    learners.append(learner_over_30)
+                    check_split_on_u30 = False
 
         #Thomposon Sampling Learner
         pulled_arm = ts_learner.pull_arm()
         #reward = env.round(pulled_arm)
-        reward = generate_reward_phase(age,gender,p,pulled_arm,current_phase)
+        reward = generate_reward_phase(retired,u30,p,pulled_arm,current_phase)
         ts_learner.update(pulled_arm,reward)
 
-        z = z.append({'Gender' : gender, 'Age': age,'Arm':pulled_arm,'Reward':reward},ignore_index=True)
+        z = z.append({'U30' : u30, 'Retired': retired,'Arm':pulled_arm,'Reward':reward},ignore_index=True)
 
         #Greedy Learner
         pulled_arm = gr_learner.pull_arm()
         #reward = env.round(pulled_arm)
-        reward = generate_reward_phase(age,gender,p,pulled_arm,current_phase)
+        reward = generate_reward_phase(retired,u30,p,pulled_arm,current_phase)
         gr_learner.update(pulled_arm,reward)
 
     ts_rewards_per_experiment.append(ts_learner.collected_rewards)
