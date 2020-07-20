@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from Environment import *
+from Non_Stationary_Environment import *
 from TS_Learner import *
 from Greedy_Learner import *
 from UCB1_Learner import *
@@ -12,21 +12,20 @@ from SWTS_Learner import *
 from SWUCB1_Learner import *
 
 
-p = np.array([[[0.324,  0.247, 0.144,  0.071, 0.018],[0.261, 0.168,  0.117, 0.051, 0.008],[0.281, 0.178, 0.134, 0.058, 0.012]],
-              [[0.294, 0.164, 0.135, 0.061, 0.012], [0.206, 0.136, 0.105, 0.048, 0.004],[0.211, 0.141, 0.094, 0.046, 0.007]],
-              [[0.198, 0.115,  0.103, 0.059, 0.005],[0.165,  0.087, 0.073, 0.042, 0.002],[0.172, 0.092, 0.079,  0.052, 0.003]]])
+p = np.array([[[0.324,  0.247, 0.144,  0.071, 0.018],[0.324,  0.247, 0.144,  0.071, 0.018],[0.261, 0.168,  0.117, 0.051, 0.008],[0.281, 0.178, 0.134, 0.058, 0.012]],
+              [[0.294, 0.164, 0.135, 0.061, 0.012],[0.294, 0.164, 0.135, 0.061, 0.012], [0.206, 0.136, 0.105, 0.048, 0.004],[0.211, 0.141, 0.094, 0.046, 0.007]],
+              [[0.198, 0.115,  0.103, 0.059, 0.005],[0.198, 0.115,  0.103, 0.059, 0.005],[0.165,  0.087, 0.073, 0.042, 0.002],[0.172, 0.092, 0.079,  0.052, 0.003]]])
 
 prices = np.array([325, 350, 375,400,425])
-prices2 = np.array([[325, 350, 375,400,425],[325, 350, 375,400,425],[325, 350, 375,400,425]])
+prices2 = np.array([[325, 350, 375,400,425],[325, 350, 375,400,425],[325, 350, 375,400,425],[325, 350, 375,400,425]])
 
 
-print(np.mean(p,axis=0)*prices2)
 
 opt = np.max(np.mean(p,axis=0)*prices2)
 
 T = 365
 
-n_experiments = 200
+n_experiments = 1000
 ts_rewards_per_experiment = []
 gr_rewards_per_experiment = []
 z = pd.DataFrame(columns=['Gender','Age','Arm','Reward'])
@@ -81,7 +80,7 @@ def get_learner(age,gender,learners,split_age=False,split_gender=False):
     if (split_gender):
         if(gender == 0):
             return learners[3]
-        else: return learners[4]
+        else:return learners[4]
     if (split_age):
         if(age == 0):
             return learners[1]
@@ -102,25 +101,25 @@ def generate_reward_phase(age,gender,probabilities,pulled_arm,phase):
         return reward
 
 
-n_phases = p.shape[1] - 1
+n_phases = p.shape[1]
 
 phases_len = int(T/n_phases)
-window_size = 26
+window_size = 19
 
 
-for e in range(0,200):
+for e in range(0,n_experiments):
     learners = []
     z = pd.DataFrame(columns=['Gender', 'Age', 'Arm', 'Reward'])
     print('Experiment {}'.format(e))
-    env = Environment(n_arms=n_arms, probabilities=p)
-    ts_learner = SWTS_Learner(n_arms=n_arms,window_size=window_size,prices=prices)
+    env = Non_Stationary_Environment(n_arms=n_arms, probabilities=p,horizon=T)
+    ts_learner = SWUCB1_Learner(n_arms=n_arms,window_size=window_size,prices=prices)
     gr_learner = SWUCB1_Learner(n_arms=n_arms,window_size=window_size,prices=prices)
     learners.append(ts_learner)
     check_split_on_age = True
     check_split_on_gender = False
     split_age = False
     split_gender = False
-    for i in range(0,T):
+    for i in range(0,364):
         current_phase = int(i / phases_len)
         gender = np.random.binomial(1, 0.5)
         age = np.random.binomial(1, 0.5)
@@ -179,7 +178,7 @@ print('n phases {}'.format(n_phases))
 opt_per_round = np.zeros(T)
 
 for i in range(0, n_phases):
-    opt_per_round[i*phases_len : (i+1)*phases_len] = opt_per_phases[i]
+    opt_per_round[i*phases_len : (i+1)*phases_len + 1] = opt_per_phases[i]
     ts_instantaneus_regret[i*phases_len : (i+1)*phases_len] = opt_per_phases[i] - np.mean(ts_rewards_per_experiment,axis=0)[i*phases_len : (i+1)*phases_len]
     swts_instantaneus_regret[i*phases_len : (i+1)*phases_len] = opt_per_phases[i] - np.mean(gr_rewards_per_experiment,axis=0)[i*phases_len : (i+1)*phases_len]
 
@@ -199,8 +198,6 @@ plt.show()
 plt.figure(0)
 plt.xlabel('T')
 plt.ylabel('Regret')
-print("opt",opt)
-print("ts_rew", np.cumsum(np.mean(ts_rewards_per_experiment,axis=0)))
 plt.plot(np.cumsum(np.mean(opt - ts_rewards_per_experiment,axis=0)),'r')
 plt.plot(np.cumsum(np.mean(opt - gr_rewards_per_experiment,axis=0)),'b')
 plt.legend(['Contextual-SWUCB1','SWUCB1'])

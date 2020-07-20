@@ -6,7 +6,7 @@ class TS_Learner(Learner):
 
     def __init__(self, n_arms, prices):
         #We have 2 parameters for each arms
-        super().__init__(n_arms,prices)
+        super().__init__(n_arms, prices)
         self.beta_parameters = np.ones((n_arms,2))
 
     def pull_arm(self):

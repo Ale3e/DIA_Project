@@ -3,8 +3,8 @@ import math
 
 
 class UCB1_Learner(Learner):
-    def __init__(self, n_arms,prices):
-        super().__init__(n_arms,prices)
+    def __init__(self, n_arms, prices):
+        super().__init__(n_arms, prices)
         self.numbers_of_selections = [0] * n_arms
         self.empirical_mean = [0] * n_arms
 

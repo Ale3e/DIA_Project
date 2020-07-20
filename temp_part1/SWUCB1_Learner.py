@@ -1,10 +1,12 @@
 from UCB1_Learner import *
 
 class SWUCB1_Learner(UCB1_Learner):
-    def __init__(self, n_arms, window_size,prices):
-        super().__init__(n_arms,prices)
+    def __init__(self, n_arms, window_size, prices):
+        super().__init__(n_arms, prices)
         self.window_size = window_size
         self.selections_windowed = [0.0] * n_arms
+
+
 
     def pull_arm(self):
         #print("\nCheckpoint")

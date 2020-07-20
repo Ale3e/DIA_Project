@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from Environment import *
 from Non_Stationary_Environment import *
 from TS_Learner import *
 from SWTS_Learner import *
@@ -18,7 +17,7 @@ n_arms = 5
 p = np.array([[0.312, 0.224, 0.140, 0.068, 0.016],[0.312, 0.224, 0.140, 0.068, 0.016],[0.245, 0.157, 0.112, 0.050, 0.007],[0.262, 0.166, 0.123, 0.055, 0.011]])
 
 
-T = 365
+T = 364
 n_experiments = 1000
 swts_reward_per_experiment = []
 ts_reward_per_experiment = []
@@ -31,10 +30,10 @@ prices = np.array([325, 350, 375,400,425])
 for e in range(0,n_experiments):
     print(e)
     ts_env = Non_Stationary_Environment(n_arms=n_arms, probabilities=p, horizon=T)
-    ts_learner = UCB1_Learner(n_arms=n_arms,prices=prices)
+    ts_learner = TS_Learner(n_arms=n_arms,prices=prices)
 
     swts_env = Non_Stationary_Environment(n_arms=n_arms, probabilities=p, horizon=T)
-    swts_learner = SWUCB1_Learner(n_arms=n_arms, window_size=window_size,prices=prices)
+    swts_learner = SWTS_Learner(n_arms=n_arms, window_size=window_size,prices=prices)
 
 
     for t in range(0,T):
@@ -81,7 +80,7 @@ plt.plot(np.mean(swts_reward_per_experiment, axis=0), 'b')
 #plt.plot(np.mean(ucb_reward_per_experiment, axis=0), 'g')
 #plt.plot(np.mean(swucb_reward_per_experiment, axis=0), 'y')
 plt.plot(opt_per_round, '--k')
-plt.legend(['UCB1','SW-UCB1','Optimum'])
+plt.legend(['TS','SW-TS','Optimum'])
 plt.show()
 
 
@@ -93,5 +92,5 @@ plt.plot(np.cumsum(ts_instantaneus_regret), 'r')
 plt.plot(np.cumsum(swts_instantaneus_regret), 'b')
 #plt.plot(np.cumsum(ucb_instantaneus_regret), 'g')
 #plt.plot(np.cumsum(swucb_instantaneus_regret), 'y')
-plt.legend(['SW-UCB1','UCB1'])
+plt.legend(['TS','SW-TS'])
 plt.show()
